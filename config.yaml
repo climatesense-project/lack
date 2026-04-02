@@ -1,0 +1,13 @@
+site_title: "LACK Knowledge Graph"
+base_url: "/lack"
+nav:
+  - label: "Home"
+    file: "index.md"
+  - label: "About"
+    file: "about.md"
+  - label: "Knowledge Graph"
+    file: "knowledge-graph.md"
+  - label: "Ontology"
+    file: "ontology.md"
+  - label: "Download"
+    file: "download.md"

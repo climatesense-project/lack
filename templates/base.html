@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title }} — {{ site_title }}</title>
+  <link rel="stylesheet" href="{{ base_url }}/static/style.css">
+</head>
+<body>
+  <header>
+    <a href="{{ base_url }}/index.html" class="site-brand">
+      <img src="{{ base_url }}/static/LACK.png" alt="LACK logo" class="site-logo">
+      <span class="site-title">{{ site_title }}</span>
+    </a>
+  </header>
+
+  <nav>
+    <ul>
+      {{ nav }}
+    </ul>
+  </nav>
+
+  <main>
+    {{ content }}
+  </main>
+
+  <footer>
+    <p>
+      <a href="https://github.com/climatesense-project/lack">ClimateSense · LACK Knowledge Graph</a>
+      · Knowledge Media Institute (KMi)
+      · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+    </p>
+  </footer>
+</body>
+</html>

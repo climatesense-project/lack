@@ -1,0 +1,278 @@
+/* LACK Knowledge Graph — stylesheet
+   Palette derived from LACK.png:
+     #f0ede3  warm off-white (logo background)
+     #2b2b2b  near-black (text, borders)
+     #d4b84a  badge yellow (logo accent)
+     #5a7fa3  blue-grey (logo suit)
+     #ffffff  white (content area)
+*/
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f0ede3;
+  color: #2b2b2b;
+  line-height: 1.65;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ── Header ─────────────────────────────────── */
+
+header {
+  background-color: #2b2b2b;
+  padding: 0.75rem 2rem;
+}
+
+.site-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.site-logo {
+  height: 52px;
+  width: auto;
+}
+
+.site-title {
+  color: #d4b84a;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* ── Nav ─────────────────────────────────────── */
+
+nav {
+  background-color: #1e1e1e;
+  border-bottom: 3px solid #d4b84a;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+nav ul li a {
+  display: block;
+  padding: 0.6rem 1.1rem;
+  color: #c8c3b5;
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 500;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+nav ul li a:hover {
+  color: #d4b84a;
+  background-color: #2b2b2b;
+}
+
+nav ul li a.active {
+  color: #d4b84a;
+  border-bottom: 3px solid #d4b84a;
+  margin-bottom: -3px;
+}
+
+/* ── Main content ────────────────────────────── */
+
+main {
+  flex: 1;
+  max-width: 900px;
+  width: 100%;
+  margin: 2.5rem auto;
+  padding: 0 1.5rem;
+  background-color: #ffffff;
+  border-radius: 4px;
+  padding: 2rem 2.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+/* ── Typography ──────────────────────────────── */
+
+main h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2b2b2b;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #d4b84a;
+}
+
+main h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #2b2b2b;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.2rem;
+  border-bottom: 1px solid #d4b84a55;
+}
+
+main h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #5a7fa3;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+main p {
+  margin-bottom: 0.9rem;
+}
+
+main a {
+  color: #5a7fa3;
+  text-decoration: underline;
+}
+
+main a:hover {
+  color: #d4b84a;
+}
+
+main ul, main ol {
+  padding-left: 1.5rem;
+  margin-bottom: 0.9rem;
+}
+
+main li {
+  margin-bottom: 0.3rem;
+}
+
+main hr {
+  border: none;
+  border-top: 1px solid #e0ddd5;
+  margin: 2rem 0;
+}
+
+/* ── Tables ──────────────────────────────────── */
+
+main table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  display: block;
+}
+
+main thead tr {
+  background-color: #2b2b2b;
+  color: #d4b84a;
+}
+
+main th {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+main td {
+  padding: 0.45rem 0.75rem;
+  border-bottom: 1px solid #e8e5de;
+  vertical-align: top;
+}
+
+main tbody tr:nth-child(even) {
+  background-color: #f8f6f1;
+}
+
+main tbody tr:hover {
+  background-color: #f0ede3;
+}
+
+/* ── Code ────────────────────────────────────── */
+
+main code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.85em;
+  background-color: #f0ede3;
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  color: #2b2b2b;
+}
+
+main pre {
+  background-color: #1e1e1e;
+  color: #d4d0c8;
+  padding: 1.25rem 1.5rem;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-bottom: 1.25rem;
+  border-left: 3px solid #d4b84a;
+}
+
+main pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.85rem;
+  color: inherit;
+}
+
+/* ── Stats/badge row (home page) ─────────────── */
+
+main table.stats {
+  display: table;
+  width: auto;
+  border: 1px solid #d4b84a;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* ── Footer ──────────────────────────────────── */
+
+footer {
+  background-color: #2b2b2b;
+  color: #888;
+  text-align: center;
+  padding: 1rem 1.5rem;
+  font-size: 0.82rem;
+}
+
+footer a {
+  color: #d4b84a;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/* ── Responsive ──────────────────────────────── */
+
+@media (max-width: 640px) {
+  main {
+    padding: 1.25rem 1rem;
+    margin: 1rem auto;
+  }
+
+  header {
+    padding: 0.6rem 1rem;
+  }
+
+  .site-logo {
+    height: 40px;
+  }
+
+  nav ul li a {
+    padding: 0.5rem 0.7rem;
+    font-size: 0.85rem;
+  }
+}
