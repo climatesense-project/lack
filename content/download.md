@@ -10,8 +10,8 @@ The LACK ontology is available in two serialisations:
 
 | File | Format | Description |
 |---|---|---|
-| [lack-ontology.ttl](lack-ontology.ttl) | Turtle (RDF) | Primary serialisation |
-| [lack-ontology.omn](lack-ontology.omn) | Manchester Syntax (OWL) | For use with Protégé and OWL tools |
+| [lack-ontology.ttl]({{ base_url }}/lack-ontology.ttl) | Turtle (RDF) | Primary serialisation |
+| [lack-ontology.omn]({{ base_url }}/lack-ontology.omn) | Manchester Syntax (OWL) | For use with Protégé and OWL tools |
 
 ### Namespace and Prefix
 

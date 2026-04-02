@@ -1,20 +1,14 @@
----
-title: Ontology
----
-
 # LACK Ontology
 
-**Prefix:** `lack:`  
-**Namespace:** `http://lack.climatesense.kmi.tools#`  
+**Prefix:** `lack:`
+**Namespace:** `http://lack.climatesense.kmi.tools#`
 **Status:** Draft
-
-Download the formal files: [Turtle (.ttl)]({{ base_url }}/lack-ontology.ttl) · [Manchester Syntax (.omn)]({{ base_url }}/lack-ontology.omn)
 
 ---
 
 ## Overview
 
-LACK is a lightweight ontology for describing relationships between people and organisations, derived from a large corpus of real-world relation expressions relevant to lobbying against climate change awareness and policies. It provides a minimal, reusable vocabulary covering membership, employment, leadership, funding, founding, and association.
+LACK (Lobbying Against Climate science Knowledge) is a lightweight ontology for describing relationships between people and organisations, derived from a large corpus of real-world relation expressions relevant to lobbying against climate change awereness and policies. It provides a minimal, reusable vocabulary covering membership, employment, leadership, funding, founding, and association.
 
 The ontology is built around two top-level types and a set of object properties connecting them.
 
@@ -130,11 +124,13 @@ Covers acquisition, ownership, controlling interest, and shareholding.
 
 ### Identity & Naming
 
-We reuse `owl:sameAs` to cover identity, renaming, aliases, and doing-business-as relations.
+We reuse OWL sameAs here.
 
 | Term | Label | Domain | Range | Inverse | Sub-property of |
 |---|---|---|---|---|---|
 | `owl:sameAs` | same as | `lack:Person` \| `lack:Collective` | `lack:Person` \| `lack:Collective` | `owl:sameAs` *(symmetric)* | |
+
+Covers identity, renaming, aliases, and doing-business-as relations.
 
 ### Temporal Activity (entity-level)
 
@@ -147,9 +143,11 @@ These datatype properties attach temporal bounds directly to a `lack:Person` or 
 
 ---
 
-## Reification of Temporal Relations
+## Reification of temporal relations
 
 When a relation is annotated with temporal information (`since`, `until`, or `when`), it is represented using **RDF reification** (`rdf:Statement`). The base triple is always asserted directly in addition to the reified statement.
+
+The two datatype properties used for reification-level temporal annotation are:
 
 | Term | Label | Domain | Range | Note |
 |---|---|---|---|---|
@@ -157,6 +155,8 @@ When a relation is annotated with temporal information (`since`, `until`, or `wh
 | `lack:until` | until | `rdf:Statement` | `xsd:gYear` | End year of the relation |
 
 When the source annotation is `when` (a point in time rather than an interval), both `lack:since` and `lack:until` are set to the same year value.
+
+These properties are intentionally kept separate from `lack:activeSince` / `lack:activeUntil`, whose domain is `lack:Person | lack:Collective` rather than `rdf:Statement`.
 
 ### Example
 
@@ -214,13 +214,3 @@ When the source annotation is `when` (a point in time rather than an interval), 
 | `lack:activeUntil` | `lack:Person` \| `lack:Collective` | `xsd:gYear` | *(datatype property)* | |
 | `lack:since` | `rdf:Statement` | `xsd:gYear` | *(datatype property — reification)* | |
 | `lack:until` | `rdf:Statement` | `xsd:gYear` | *(datatype property — reification)* | |
-
----
-
-## Schema.org Alignment
-
-A mapping exercise to schema.org has been conducted. Key findings:
-
-- **Heavy reliance on `schema:memberOf + roleName`** — schema.org has no dedicated properties for most named organisational roles (CEO, chair, treasurer, VP, etc.). The recommended pattern is to use `schema:memberOf` with a `schema:Role` wrapper and a `roleName` literal to capture the specific title.
-- **Inverse direction mismatches** — many relations (funded, published, created, employed) are naturally expressed person→org in LACK, but schema.org models the predicate on the receiving entity (e.g. `schema:funder` is a property of the funded thing).
-- **No-match cases** — highly specific operational or contractual relations (lobbied for, conducted public relations for, created a crisis plan for, launched, incorporated) have no schema.org equivalent and are better represented with custom predicates in a domain-specific vocabulary such as LACK.

@@ -73,7 +73,9 @@ def build_nav(nav_items, base_url, current_slug):
 
 
 def render_page(template, content_html, page_title, nav_html, site_title, base_url):
-    """Substitute all placeholders in the base template."""
+    """Substitute all placeholders in the base template and content."""
+    # Apply base_url substitution to content first (for links in markdown)
+    content_html = content_html.replace("{{ base_url }}", base_url)
     out = template
     out = out.replace("{{ page_title }}", page_title)
     out = out.replace("{{ site_title }}", site_title)
