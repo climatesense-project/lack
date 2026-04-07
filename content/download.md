@@ -24,7 +24,11 @@ URI:     http://lack.climatesense.kmi.tools#
 
 ## Knowledge Graph Data
 
-The LACK knowledge graph data (~70,000 relations) is not yet publicly available. A SPARQL endpoint and data dump will be published here when the knowledge graph is ready for release.
+The LACK knowledge graph is currently under development. An early release of the data is available for download below. A SPARQL endpoint and full data dump will be published here when the knowledge graph is ready for release.
+
+| File | Format | Description |
+|---|---|---|
+| [KG.ttl]({{ base_url }}/KG.ttl) | Turtle (RDF) | Knowledge graph — early release |
 
 Check the [GitHub repository](https://github.com/climatesense-project/lack) for updates.
 

@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Explore — LACK Knowledge Graph</title>
+<style>
+/* ── Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #f0ede3;
+  color: #2b2b2b;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Site header ── */
+.site-header {
+  background: #2b2b2b;
+  padding: 0.65rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.site-header a { text-decoration: none; display: flex; align-items: center; gap: 0.75rem; }
+.site-header img { height: 44px; width: auto; }
+.site-header .title { color: #d4b84a; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.02em; }
+
+/* ── Site nav ── */
+.site-nav {
+  background: #1e1e1e;
+  border-bottom: 3px solid #d4b84a;
+}
+.site-nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.site-nav a {
+  display: block;
+  padding: 0.55rem 1rem;
+  color: #c8c3b5;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.site-nav a:hover { color: #d4b84a; }
+.site-nav a.active { color: #d4b84a; border-bottom: 3px solid #d4b84a; margin-bottom: -3px; }
+
+/* ── Endpoint bar ── */
+.endpoint-bar {
+  background: #2b2b2b;
+  border-bottom: 1px solid #444;
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.endpoint-bar label { color: #aaa; font-size: 0.82rem; white-space: nowrap; }
+.endpoint-bar input {
+  flex: 1;
+  min-width: 260px;
+  background: #1e1e1e;
+  border: 1px solid #555;
+  border-radius: 4px;
+  color: #e0e0e0;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.88rem;
+  font-family: monospace;
+}
+.endpoint-bar input:focus { outline: none; border-color: #d4b84a; }
+.btn-connect {
+  background: #d4b84a;
+  color: #2b2b2b;
+  border: none;
+  border-radius: 4px;
+  padding: 0.35rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-connect:hover { background: #c4a83a; }
+.status-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #555;
+  flex-shrink: 0;
+}
+.status-dot.ok { background: #4caf50; }
+.status-dot.err { background: #e53935; }
+.status-label { color: #aaa; font-size: 0.8rem; }
+
+/* ── Explorer shell ── */
+.explorer {
+  flex: 1;
+  max-width: 1100px;
+  width: 100%;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #d4b84a;
+  margin-bottom: 1.25rem;
+}
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #777;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s;
+}
+.tab-btn:hover { color: #2b2b2b; }
+.tab-btn.active { color: #2b2b2b; border-bottom-color: #d4b84a; }
+
+/* ── Tab panels ── */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ── Cards / panels ── */
+.panel {
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #e0ddd5;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.panel h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2b2b2b;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #e0ddd5;
+}
+.panel h3 { font-size: 0.9rem; font-weight: 700; color: #5a7fa3; margin: 1rem 0 0.5rem; }
+
+/* ── Stat cards (statistics tab) ── */
+.stat-cards { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+.stat-card {
+  flex: 1 1 130px;
+  background: #f8f6f1;
+  border: 1px solid #e0ddd5;
+  border-top: 3px solid #d4b84a;
+  border-radius: 4px;
+  padding: 0.9rem 1rem;
+  text-align: center;
+}
+.stat-card .num { font-size: 1.7rem; font-weight: 700; color: #2b2b2b; line-height: 1.1; }
+.stat-card .lbl { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.2rem; }
+
+/* ── Bar charts ── */
+.chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+.chart-block { background: #f8f6f1; border: 1px solid #e0ddd5; border-radius: 4px; padding: 1rem; }
+.chart-block h3 { margin-top: 0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: #5a7fa3; margin-bottom: 0.6rem; }
+.bar-row { display: grid; grid-template-columns: 160px 1fr 52px; align-items: center; gap: 0.4rem; font-size: 0.78rem; margin-bottom: 0.35rem; }
+.bar-row .lbl { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #2b2b2b; }
+.bar-wrap { background: #e0ddd5; border-radius: 2px; height: 13px; overflow: hidden; }
+.bar-fill { display: block; height: 100%; background: #5a7fa3; border-radius: 2px; }
+.bar-fill.yellow { background: #d4b84a; }
+.bar-cnt { text-align: right; color: #888; font-variant-numeric: tabular-nums; }
+
+/* ── Tables ── */
+.data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.data-table th { background: #2b2b2b; color: #d4b84a; padding: 0.45rem 0.75rem; text-align: left; font-weight: 600; white-space: nowrap; }
+.data-table td { padding: 0.4rem 0.75rem; border-bottom: 1px solid #e8e5de; vertical-align: top; }
+.data-table tbody tr:nth-child(even) { background: #f8f6f1; }
+.data-table tbody tr:hover { background: #f0ede3; cursor: pointer; }
+.data-table a { color: #5a7fa3; text-decoration: none; }
+.data-table a:hover { color: #d4b84a; text-decoration: underline; }
+
+/* ── Pagination ── */
+.pagination { display: flex; gap: 0.4rem; align-items: center; margin-top: 0.75rem; flex-wrap: wrap; }
+.page-btn {
+  background: #f8f6f1; border: 1px solid #ddd; border-radius: 3px;
+  padding: 0.25rem 0.65rem; font-size: 0.82rem; cursor: pointer;
+}
+.page-btn:hover { background: #e8e5de; }
+.page-btn.active { background: #2b2b2b; color: #d4b84a; border-color: #2b2b2b; }
+.page-info { font-size: 0.8rem; color: #888; margin-left: 0.5rem; }
+
+/* ── Search bar ── */
+.search-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+.search-input {
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+}
+.search-input:focus { outline: none; border-color: #5a7fa3; }
+.btn-run {
+  background: #5a7fa3; color: #fff; border: none; border-radius: 4px;
+  padding: 0.4rem 1rem; font-size: 0.88rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.btn-run:hover { background: #4a6f93; }
+
+/* ── Type list ── */
+.type-list { display: flex; flex-direction: column; gap: 0.3rem; }
+.type-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.45rem 0.75rem; border-radius: 4px; cursor: pointer;
+  background: #f8f6f1; border: 1px solid #e0ddd5;
+  font-size: 0.88rem; transition: background 0.1s;
+}
+.type-item:hover { background: #f0ede3; }
+.type-item.active { background: #2b2b2b; color: #d4b84a; border-color: #2b2b2b; }
+.type-item .badge {
+  background: #e0ddd5; color: #555; border-radius: 10px;
+  padding: 0.1rem 0.5rem; font-size: 0.75rem; font-weight: 600;
+}
+.type-item.active .badge { background: #d4b84a44; color: #d4b84a; }
+
+/* ── Two-column layout for types ── */
+.types-layout { display: grid; grid-template-columns: 240px 1fr; gap: 1.25rem; }
+
+/* ── Entity detail ── */
+.entity-header { margin-bottom: 1rem; }
+.entity-header h2 { border: none; margin-bottom: 0.25rem; }
+.entity-meta { display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.82rem; margin-bottom: 0.5rem; }
+.badge-type {
+  background: #2b2b2b; color: #d4b84a; border-radius: 4px;
+  padding: 0.15rem 0.6rem; font-size: 0.78rem; font-family: monospace;
+}
+.badge-link {
+  background: #5a7fa388; color: #fff; border-radius: 4px;
+  padding: 0.15rem 0.6rem; font-size: 0.78rem; text-decoration: none;
+}
+.badge-link:hover { background: #5a7fa3; }
+.back-btn {
+  background: none; border: none; color: #5a7fa3; cursor: pointer;
+  font-size: 0.85rem; padding: 0; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.3rem;
+}
+.back-btn:hover { color: #d4b84a; }
+
+/* ── SPARQL editor ── */
+.sparql-layout { display: grid; grid-template-columns: 260px 1fr; gap: 1.25rem; }
+.query-sidebar h3 { font-size: 0.8rem; text-transform: uppercase; color: #5a7fa3; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+.query-list { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 1rem; }
+.query-item {
+  padding: 0.4rem 0.65rem; border-radius: 4px; cursor: pointer;
+  background: #f8f6f1; border: 1px solid #e0ddd5;
+  font-size: 0.8rem; line-height: 1.3;
+}
+.query-item:hover { background: #f0ede3; }
+.query-item .q-title { font-weight: 600; color: #2b2b2b; }
+.query-item .q-desc { color: #888; margin-top: 0.1rem; }
+.query-history-select {
+  width: 100%; font-size: 0.82rem; padding: 0.35rem 0.5rem;
+  border: 1px solid #ccc; border-radius: 4px; background: #fff;
+}
+textarea.sparql-editor {
+  width: 100%; height: 220px;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 0.82rem; line-height: 1.5;
+  border: 1px solid #ccc; border-radius: 4px;
+  padding: 0.75rem; background: #1e1e1e; color: #d4d0c8;
+  resize: vertical;
+}
+textarea.sparql-editor:focus { outline: none; border-color: #d4b84a; }
+.sparql-toolbar { display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem; flex-wrap: wrap; }
+.btn-export {
+  background: #f8f6f1; border: 1px solid #ccc; border-radius: 4px;
+  padding: 0.35rem 0.75rem; font-size: 0.82rem; cursor: pointer;
+}
+.btn-export:hover { background: #e8e5de; }
+.shortcut-hint { font-size: 0.75rem; color: #aaa; margin-left: auto; }
+.results-area { margin-top: 1rem; overflow-x: auto; }
+
+/* ── Messages ── */
+.msg { padding: 0.65rem 1rem; border-radius: 4px; font-size: 0.88rem; margin-bottom: 0.75rem; }
+.msg.info { background: #e8f0f8; color: #3a5f8a; border-left: 3px solid #5a7fa3; }
+.msg.err { background: #fce8e8; color: #b71c1c; border-left: 3px solid #e53935; }
+.msg.ok { background: #e8f5e9; color: #1b5e20; border-left: 3px solid #4caf50; }
+.msg.warn { background: #fff8e1; color: #6d4c00; border-left: 3px solid #d4b84a; }
+
+/* ── Loading spinner ── */
+.spinner {
+  display: inline-block; width: 16px; height: 16px;
+  border: 2px solid #e0e0e0; border-top-color: #5a7fa3;
+  border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 0.4rem;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Misc ── */
+.clickable-entity { color: #5a7fa3; cursor: pointer; text-decoration: underline dotted; }
+.clickable-entity:hover { color: #d4b84a; }
+code { font-family: monospace; background: #f0ede3; padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.85em; }
+.empty { color: #aaa; font-size: 0.88rem; font-style: italic; padding: 1rem 0; }
+.top-list { list-style: none; counter-reset: rank; }
+.top-list li { counter-increment: rank; display: flex; align-items: baseline; gap: 0.5rem; padding: 0.3rem 0; border-bottom: 1px solid #f0ede3; font-size: 0.85rem; }
+.top-list li::before { content: counter(rank); color: #d4b84a; font-weight: 700; font-size: 0.8rem; min-width: 1.2rem; }
+
+/* ── Footer ── */
+.site-footer { background: #2b2b2b; color: #888; text-align: center; padding: 0.85rem; font-size: 0.8rem; }
+.site-footer a { color: #d4b84a; text-decoration: none; }
+
+/* ── Responsive ── */
+@media (max-width: 720px) {
+  .types-layout, .sparql-layout, .chart-grid { grid-template-columns: 1fr; }
+  .bar-row { grid-template-columns: 110px 1fr 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Site header -->
+<header class="site-header">
+  <a href="../index.html">
+    <img src="LACK.png" alt="LACK logo">
+    <span class="title">LACK Knowledge Graph</span>
+  </a>
+</header>
+
+<!-- Site nav -->
+<nav class="site-nav">
+  <ul>
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../about.html">About</a></li>
+    <li><a href="../knowledge-graph.html">Knowledge Graph</a></li>
+    <li><a href="../ontology.html">Ontology</a></li>
+    <li><a href="../download.html">Download</a></li>
+    <li><a href="explore.html" class="active">Explore</a></li>
+  </ul>
+</nav>
+
+<!-- Endpoint configuration bar -->
+<div class="endpoint-bar">
+  <label for="ep-input">SPARQL endpoint</label>
+  <input type="text" id="ep-input" placeholder="http://localhost:9999/sparql" spellcheck="false">
+  <button class="btn-connect" id="btn-connect">Connect</button>
+  <span class="status-dot" id="status-dot"></span>
+  <span class="status-label" id="status-label">Not connected</span>
+</div>
+
+<!-- Main explorer -->
+<div class="explorer">
+
+  <div id="cors-warning" class="msg warn" style="display:none">
+    <strong>CORS note:</strong> If queries fail, ensure your Virtuoso instance allows cross-origin requests.
+    In Virtuoso, set <code>CORS</code> headers in <code>virtuoso.ini</code> or use a local proxy.
+    For localhost, Virtuoso Open Source allows CORS by default on port 9999.
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="stats">Statistics</button>
+    <button class="tab-btn" data-tab="types">Browse by type</button>
+    <button class="tab-btn" data-tab="entities">Entity search</button>
+    <button class="tab-btn" data-tab="sparql">SPARQL editor</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       TAB 1: STATISTICS
+  ══════════════════════════════════════════ -->
+  <div class="tab-panel active" id="tab-stats">
+
+    <div class="panel">
+      <h2>KG summary</h2>
+      <div class="stat-cards" id="stat-cards">
+        <div class="stat-card"><div class="num" id="sc-entities">—</div><div class="lbl">Entities</div></div>
+        <div class="stat-card"><div class="num" id="sc-persons">—</div><div class="lbl">Persons</div></div>
+        <div class="stat-card"><div class="num" id="sc-collectives">—</div><div class="lbl">Collectives</div></div>
+        <div class="stat-card"><div class="num" id="sc-relations">—</div><div class="lbl">Relations</div></div>
+        <div class="stat-card"><div class="num" id="sc-wikidata">—</div><div class="lbl">Wikidata links</div></div>
+        <div class="stat-card"><div class="num" id="sc-years">—</div><div class="lbl">Temporal span</div></div>
+      </div>
+      <div id="stats-loading" class="msg info" style="display:none"><span class="spinner"></span>Loading statistics…</div>
+      <div id="stats-error" style="display:none"></div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-block">
+        <h3>Entities by type</h3>
+        <div id="chart-types" class="bar-chart-container"><span class="empty">Connect to load</span></div>
+      </div>
+      <div class="chart-block">
+        <h3>Relations by predicate</h3>
+        <div id="chart-rels" class="bar-chart-container"><span class="empty">Connect to load</span></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:1.25rem">
+      <h2>Sources</h2>
+      <div id="chart-sources"><span class="empty">Connect to load</span></div>
+    </div>
+
+    <div class="panel">
+      <h2>Top 10 most connected entities</h2>
+      <div id="top-connected"><span class="empty">Connect to load</span></div>
+    </div>
+
+  </div><!-- /tab-stats -->
+
+
+  <!-- ══════════════════════════════════════════
+       TAB 2: BROWSE BY TYPE
+  ══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-types">
+    <div class="panel">
+      <h2>Browse by type</h2>
+      <div class="types-layout">
+        <!-- Left: type list -->
+        <div>
+          <div class="search-row">
+            <input type="text" class="search-input" id="type-filter" placeholder="Filter types…">
+          </div>
+          <div class="type-list" id="type-list"><span class="empty">Connect to load types</span></div>
+        </div>
+        <!-- Right: entities of selected type -->
+        <div id="type-entities-panel">
+          <div class="msg info">Select a type on the left to browse its entities.</div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /tab-types -->
+
+
+  <!-- ══════════════════════════════════════════
+       TAB 3: ENTITY SEARCH / DETAIL
+  ══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-entities">
+    <div class="panel" id="entity-search-panel">
+      <h2>Entity search</h2>
+      <div class="search-row">
+        <input type="text" class="search-input" id="entity-search-input" placeholder="Search by label…">
+        <button class="btn-run" id="btn-entity-search">Search</button>
+      </div>
+      <div id="entity-search-results"><span class="empty">Type a name and press Search (or Enter)</span></div>
+    </div>
+    <div id="entity-detail-panel" style="display:none"></div>
+  </div><!-- /tab-entities -->
+
+
+  <!-- ══════════════════════════════════════════
+       TAB 4: SPARQL EDITOR
+  ══════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-sparql">
+    <div class="sparql-layout">
+
+      <!-- Sidebar: example queries + history -->
+      <div class="query-sidebar panel">
+        <h3>Example queries</h3>
+        <div class="query-list" id="example-query-list"></div>
+
+        <h3 style="margin-top:1rem">History</h3>
+        <select class="query-history-select" id="history-select" size="6"></select>
+        <button class="btn-export" style="width:100%;margin-top:0.4rem" id="btn-load-history">Load selected</button>
+      </div>
+
+      <!-- Main editor -->
+      <div>
+        <div class="panel">
+          <h2>SPARQL editor</h2>
+          <textarea class="sparql-editor" id="sparql-editor" spellcheck="false"></textarea>
+          <div class="sparql-toolbar">
+            <button class="btn-run" id="btn-sparql-run">▶ Run query</button>
+            <button class="btn-export" id="btn-sparql-export" style="display:none">⬇ Export CSV</button>
+            <span class="shortcut-hint">Ctrl+Enter to run</span>
+          </div>
+        </div>
+        <div id="sparql-results" class="results-area"></div>
+      </div>
+
+    </div>
+  </div><!-- /tab-sparql -->
+
+</div><!-- /explorer -->
+
+<footer class="site-footer">
+  <a href="https://github.com/climatesense-project/lack">ClimateSense · LACK Knowledge Graph</a>
+  · Knowledge Media Institute (KMi) · <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>
+</footer>
+
+<script>
+'use strict';
+
+// ══════════════════════════════════════════════════════════
+// CONSTANTS & PREFIXES
+// ══════════════════════════════════════════════════════════
+
+const PREFIXES = `PREFIX lack:        <http://lack.climatesense.kmi.tools/ontology/>
+PREFIX lack-entity: <http://lack.climatesense.kmi.tools/entity/>
+PREFIX lack-type:   <http://lack.climatesense.kmi.tools/type/>
+PREFIX owl:         <http://www.w3.org/2002/07/owl#>
+PREFIX rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs:        <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd:         <http://www.w3.org/2001/XMLSchema#>
+`;
+
+const DEFAULT_ENDPOINT = 'http://localhost:9999/sparql';
+const PAGE_SIZE = 25;
+const HISTORY_KEY = 'lack_sparql_history';
+const ENDPOINT_KEY = 'lack_sparql_endpoint';
+
+// ══════════════════════════════════════════════════════════
+// EXAMPLE QUERIES
+// ══════════════════════════════════════════════════════════
+
+const EXAMPLE_QUERIES = [
+  {
+    title: 'Count entities by type',
+    desc: 'How many entities of each type exist?',
+    query: `${PREFIXES}
+SELECT ?type (COUNT(DISTINCT ?e) AS ?count)
+WHERE {
+  ?e rdf:type ?type .
+  FILTER(STRSTARTS(STR(?type), "http://lack.climatesense.kmi.tools/type/"))
+}
+GROUP BY ?type
+ORDER BY DESC(?count)`
+  },
+  {
+    title: 'Count relations by predicate',
+    desc: 'Distribution of all LACK relation types',
+    query: `${PREFIXES}
+SELECT ?predicate (COUNT(*) AS ?count)
+WHERE {
+  ?s ?predicate ?o .
+  FILTER(STRSTARTS(STR(?predicate), "http://lack.climatesense.kmi.tools/ontology/"))
+  FILTER(?predicate != lack:Person && ?predicate != lack:Collective)
+}
+GROUP BY ?predicate
+ORDER BY DESC(?count)`
+  },
+  {
+    title: 'Members of an organisation',
+    desc: 'Who are members of a given organisation?',
+    query: `${PREFIXES}
+SELECT ?personLabel ?orgLabel
+WHERE {
+  ?person lack:memberOf ?org .
+  ?person rdfs:label ?personLabel .
+  ?org rdfs:label ?orgLabel .
+  FILTER(CONTAINS(LCASE(?orgLabel), "heritage foundation"))
+}
+ORDER BY ?personLabel`
+  },
+  {
+    title: 'Funding network',
+    desc: 'Who funds whom? (top 50 funding relations)',
+    query: `${PREFIXES}
+SELECT ?funderLabel ?fundedLabel
+WHERE {
+  ?funded lack:fundedBy ?funder .
+  ?funder rdfs:label ?funderLabel .
+  ?funded rdfs:label ?fundedLabel .
+}
+ORDER BY ?funderLabel ?fundedLabel
+LIMIT 50`
+  },
+  {
+    title: 'Leadership roles',
+    desc: 'Persons who lead organisations',
+    query: `${PREFIXES}
+SELECT ?personLabel ?orgLabel
+WHERE {
+  ?person lack:leadsAt ?org .
+  ?person rdfs:label ?personLabel .
+  ?org rdfs:label ?orgLabel .
+}
+ORDER BY ?orgLabel
+LIMIT 100`
+  },
+  {
+    title: 'Most connected entities',
+    desc: 'Entities with the most in+out relations (one row per entity)',
+    query: `${PREFIXES}
+SELECT ?entity (MIN(?label) AS ?label) (COUNT(*) AS ?degree)
+WHERE {
+  ?entity rdfs:label ?label .
+  FILTER(STRSTARTS(STR(?entity), "http://lack.climatesense.kmi.tools/entity/"))
+  {
+    ?entity ?p ?o .
+    FILTER(STRSTARTS(STR(?p), "http://lack.climatesense.kmi.tools/ontology/"))
+  } UNION {
+    ?s ?p ?entity .
+    FILTER(STRSTARTS(STR(?p), "http://lack.climatesense.kmi.tools/ontology/"))
+  }
+}
+GROUP BY ?entity
+ORDER BY DESC(?degree)
+LIMIT 20`
+  },
+  {
+    title: 'Entities linked to Wikidata',
+    desc: 'Entities with a Wikidata identifier (one row per entity)',
+    query: `${PREFIXES}
+SELECT ?entity (MIN(?label) AS ?label) (MIN(?wd) AS ?wd)
+WHERE {
+  ?entity rdfs:label ?label .
+  ?entity owl:sameAs ?wd .
+  FILTER(STRSTARTS(STR(?wd), "https://www.wikidata.org/entity/"))
+}
+GROUP BY ?entity
+ORDER BY ?label
+LIMIT 100`
+  },
+  {
+    title: 'Temporal relations (since/until)',
+    desc: 'Relations with temporal annotations',
+    query: `${PREFIXES}
+SELECT ?subjectLabel ?predicate ?objectLabel ?since ?until
+WHERE {
+  ?stmt rdf:type rdf:Statement ;
+        rdf:subject ?subject ;
+        rdf:predicate ?predicate ;
+        rdf:object ?object .
+  OPTIONAL { ?stmt lack:since ?since }
+  OPTIONAL { ?stmt lack:until ?until }
+  ?subject rdfs:label ?subjectLabel .
+  ?object rdfs:label ?objectLabel .
+  FILTER(STRSTARTS(STR(?predicate), "http://lack.climatesense.kmi.tools/ontology/"))
+}
+ORDER BY ?subjectLabel
+LIMIT 50`
+  },
+  {
+    title: 'Think tanks and their funders',
+    desc: 'Which think tanks are funded by whom?',
+    query: `${PREFIXES}
+SELECT (MIN(?tankLabel) AS ?tankLabel) (MIN(?funderLabel) AS ?funderLabel)
+WHERE {
+  ?tank rdf:type lack-type:think_tank .
+  ?tank lack:fundedBy ?funder .
+  ?tank rdfs:label ?tankLabel .
+  ?funder rdfs:label ?funderLabel .
+}
+GROUP BY ?tank ?funder
+ORDER BY ?tankLabel`
+  },
+  {
+    title: 'Persons by source (Desmog)',
+    desc: 'Persons whose profiles come from Desmog',
+    query: `${PREFIXES}
+SELECT (MIN(?label) AS ?label) (MIN(?source) AS ?source)
+WHERE {
+  ?p rdf:type lack:Person .
+  ?p rdfs:label ?label .
+  ?p rdfs:seeAlso ?source .
+  FILTER(CONTAINS(STR(?source), "desmog.com"))
+}
+GROUP BY ?p
+ORDER BY ?label
+LIMIT 100`
+  },
+  {
+    title: 'Organisations derived from others',
+    desc: 'Derivation / spin-off relationships',
+    query: `${PREFIXES}
+SELECT (MIN(?childLabel) AS ?childLabel) (MIN(?parentLabel) AS ?parentLabel)
+WHERE {
+  ?child lack:derivedFrom ?parent .
+  ?child rdfs:label ?childLabel .
+  ?parent rdfs:label ?parentLabel .
+}
+GROUP BY ?child ?parent
+ORDER BY ?parentLabel`
+  },
+  {
+    title: 'Active entities in a year range',
+    desc: 'Entities active between 2010 and 2020',
+    query: `${PREFIXES}
+SELECT ?entity (MIN(?label) AS ?label) (MIN(?since) AS ?since) (MIN(?until) AS ?until)
+WHERE {
+  ?entity rdfs:label ?label .
+  OPTIONAL { ?entity lack:activeSince ?since }
+  OPTIONAL { ?entity lack:activeUntil ?until }
+  FILTER(?since >= "2010"^^xsd:gYear && ?until <= "2020"^^xsd:gYear)
+}
+GROUP BY ?entity
+ORDER BY ?since ?label`
+  },
+  {
+    title: 'Coalitions and their members',
+    desc: 'Members of coalition-type organisations',
+    query: `${PREFIXES}
+SELECT (MIN(?coalitionLabel) AS ?coalitionLabel) (MIN(?memberLabel) AS ?memberLabel)
+WHERE {
+  ?coalition rdf:type lack-type:coalition .
+  ?coalition lack:hasMember ?member .
+  ?coalition rdfs:label ?coalitionLabel .
+  ?member rdfs:label ?memberLabel .
+}
+GROUP BY ?coalition ?member
+ORDER BY ?coalitionLabel ?memberLabel`
+  },
+  {
+    title: 'Publications contributed to',
+    desc: 'Persons who contributed to publications',
+    query: `${PREFIXES}
+SELECT (MIN(?personLabel) AS ?personLabel) (MIN(?pubLabel) AS ?pubLabel)
+WHERE {
+  ?person rdf:type lack:Person .
+  ?person lack:contributedTo ?pub .
+  ?pub rdf:type lack-type:publication .
+  ?person rdfs:label ?personLabel .
+  ?pub rdfs:label ?pubLabel .
+}
+GROUP BY ?person ?pub
+ORDER BY ?personLabel
+LIMIT 100`
+  },
+  {
+    title: 'Full entity profile',
+    desc: 'All facts about one entity (edit IRI)',
+    query: `${PREFIXES}
+# Replace the IRI below with any lack-entity: IRI
+SELECT ?predicate ?object ?objectLabel
+WHERE {
+  BIND(lack-entity:6a8516329285034d40f8693c65f88e4f66e1a806 AS ?entity)
+  ?entity ?predicate ?object .
+  OPTIONAL { ?object rdfs:label ?objectLabel }
+}
+ORDER BY ?predicate`
+  }
+];
+
+// ══════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════
+
+let endpoint = localStorage.getItem(ENDPOINT_KEY) || DEFAULT_ENDPOINT;
+let connected = false;
+let lastResults = null;
+let currentTypePage = 1;
+let selectedType = null;
+let allTypeEntities = [];
+
+// ══════════════════════════════════════════════════════════
+// SPARQL FETCH (Virtuoso compatible)
+// ══════════════════════════════════════════════════════════
+
+async function sparqlQuery(query) {
+  const url = new URL(endpoint);
+  url.searchParams.set('query', query);
+  url.searchParams.set('format', 'application/sparql-results+json');
+
+  const res = await fetch(url.toString(), {
+    headers: { 'Accept': 'application/sparql-results+json' }
+  });
+
+  if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+  const json = await res.json();
+  return json;
+}
+
+function sparqlVal(binding) {
+  if (!binding) return '';
+  return binding.value;
+}
+
+function shortIRI(iri) {
+  if (!iri) return '';
+  return iri
+    .replace('http://lack.climatesense.kmi.tools/ontology/', 'lack:')
+    .replace('http://lack.climatesense.kmi.tools/entity/', 'lack-entity:…')
+    .replace('http://lack.climatesense.kmi.tools/type/', 'lack-type:')
+    .replace('http://www.w3.org/2002/07/owl#', 'owl:')
+    .replace('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf:')
+    .replace('http://www.w3.org/2000/01/rdf-schema#', 'rdfs:')
+    .replace('http://www.wikidata.org/entity/', 'wd:')
+    .replace('https://www.wikidata.org/entity/', 'wd:');
+}
+
+function typeName(typeIRI) {
+  return typeIRI.replace('http://lack.climatesense.kmi.tools/type/', '').replace(/_/g, ' ');
+}
+
+function fmtNum(n) {
+  return Number(n).toLocaleString();
+}
+
+// ══════════════════════════════════════════════════════════
+// ENDPOINT CONNECT
+// ══════════════════════════════════════════════════════════
+
+document.getElementById('ep-input').value = endpoint;
+
+async function connect() {
+  endpoint = document.getElementById('ep-input').value.trim();
+  localStorage.setItem(ENDPOINT_KEY, endpoint);
+
+  const dot = document.getElementById('status-dot');
+  const lbl = document.getElementById('status-label');
+  dot.className = 'status-dot';
+  lbl.textContent = 'Testing…';
+
+  try {
+    const url = new URL(endpoint);
+    url.searchParams.set('query', 'ASK {}');
+    url.searchParams.set('format', 'application/sparql-results+json');
+    const res = await fetch(url.toString(), { headers: { 'Accept': 'application/sparql-results+json' } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    connected = true;
+    dot.className = 'status-dot ok';
+    lbl.textContent = 'Connected';
+    document.getElementById('cors-warning').style.display = 'none';
+    loadActiveTab();
+  } catch (e) {
+    connected = false;
+    dot.className = 'status-dot err';
+    lbl.textContent = 'Unreachable — ' + e.message;
+    document.getElementById('cors-warning').style.display = 'block';
+  }
+}
+
+document.getElementById('btn-connect').addEventListener('click', connect);
+document.getElementById('ep-input').addEventListener('keydown', e => { if (e.key === 'Enter') connect(); });
+
+// ══════════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════════
+
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabPanels = document.querySelectorAll('.tab-panel');
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabBtns.forEach(b => b.classList.remove('active'));
+    tabPanels.forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    window.location.hash = btn.dataset.tab;
+    loadActiveTab();
+  });
+});
+
+function loadActiveTab() {
+  if (!connected) return;
+  const active = document.querySelector('.tab-btn.active');
+  if (!active) return;
+  const tab = active.dataset.tab;
+  if (tab === 'stats') loadStats();
+  else if (tab === 'types') loadTypes();
+}
+
+function restoreTab() {
+  const hash = window.location.hash.replace('#', '');
+  const btn = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
+  if (btn) btn.click();
+}
+window.addEventListener('load', restoreTab);
+
+// ══════════════════════════════════════════════════════════
+// TAB 1: STATISTICS
+// ══════════════════════════════════════════════════════════
+
+async function loadStats() {
+  const loading = document.getElementById('stats-loading');
+  const errEl = document.getElementById('stats-error');
+  loading.style.display = 'block';
+  errEl.style.display = 'none';
+
+  try {
+    await Promise.all([
+      loadSummaryCards(),
+      loadTypeChart(),
+      loadRelChart(),
+      loadSourceChart(),
+      loadTopConnected()
+    ]);
+  } catch (e) {
+    errEl.innerHTML = `<div class="msg err">Error loading statistics: ${e.message}</div>`;
+    errEl.style.display = 'block';
+  } finally {
+    loading.style.display = 'none';
+  }
+}
+
+async function loadSummaryCards() {
+  const r1 = await sparqlQuery(`${PREFIXES}
+SELECT (COUNT(DISTINCT ?e) AS ?n) WHERE {
+  ?e rdf:type ?t . FILTER(?t = lack:Person || ?t = lack:Collective)
+}`);
+  document.getElementById('sc-entities').textContent = fmtNum(sparqlVal(r1.results.bindings[0]?.n));
+
+  const r2 = await sparqlQuery(`${PREFIXES}
+SELECT (COUNT(DISTINCT ?e) AS ?n) WHERE { ?e rdf:type lack:Person }`);
+  document.getElementById('sc-persons').textContent = fmtNum(sparqlVal(r2.results.bindings[0]?.n));
+
+  const r3 = await sparqlQuery(`${PREFIXES}
+SELECT (COUNT(DISTINCT ?e) AS ?n) WHERE { ?e rdf:type lack:Collective }`);
+  document.getElementById('sc-collectives').textContent = fmtNum(sparqlVal(r3.results.bindings[0]?.n));
+
+  const r4 = await sparqlQuery(`${PREFIXES}
+SELECT (COUNT(*) AS ?n) WHERE {
+  ?s ?p ?o .
+  FILTER(STRSTARTS(STR(?p), "http://lack.climatesense.kmi.tools/ontology/"))
+  FILTER(?s != rdf:Statement)
+}`);
+  document.getElementById('sc-relations').textContent = fmtNum(sparqlVal(r4.results.bindings[0]?.n));
+
+  const r5 = await sparqlQuery(`${PREFIXES}
+SELECT (COUNT(DISTINCT ?e) AS ?n) WHERE {
+  ?e owl:sameAs ?wd .
+  FILTER(STRSTARTS(STR(?wd), "https://www.wikidata.org/entity/"))
+}`);
+  document.getElementById('sc-wikidata').textContent = fmtNum(sparqlVal(r5.results.bindings[0]?.n));
+
+  const r6 = await sparqlQuery(`${PREFIXES}
+SELECT (MIN(?y) AS ?minY) (MAX(?y) AS ?maxY) WHERE {
+  { ?e lack:activeSince ?y } UNION { ?e lack:activeUntil ?y }
+  UNION { ?stmt lack:since ?y } UNION { ?stmt lack:until ?y }
+}`);
+  const b6 = r6.results.bindings[0];
+  if (b6?.minY && b6?.maxY) {
+    document.getElementById('sc-years').textContent = `${b6.minY.value}–${b6.maxY.value}`;
+  }
+}
+
+async function loadTypeChart() {
+  const r = await sparqlQuery(`${PREFIXES}
+SELECT ?type (COUNT(DISTINCT ?e) AS ?count) WHERE {
+  ?e rdf:type ?type .
+  FILTER(STRSTARTS(STR(?type), "http://lack.climatesense.kmi.tools/type/"))
+}
+GROUP BY ?type
+ORDER BY DESC(?count)
+LIMIT 15`);
+
+  const el = document.getElementById('chart-types');
+  if (!r.results.bindings.length) { el.innerHTML = '<span class="empty">No data</span>'; return; }
+  const max = parseInt(r.results.bindings[0].count.value);
+  el.innerHTML = r.results.bindings.map(b => {
+    const n = parseInt(b.count.value);
+    const pct = Math.round(n / max * 100);
+    const name = typeName(b.type.value);
+    return `<div class="bar-row">
+      <span class="lbl" title="${name}">${name}</span>
+      <div class="bar-wrap"><span class="bar-fill" style="width:${pct}%"></span></div>
+      <span class="bar-cnt">${fmtNum(n)}</span>
+    </div>`;
+  }).join('');
+}
+
+async function loadRelChart() {
+  const r = await sparqlQuery(`${PREFIXES}
+SELECT ?predicate (COUNT(*) AS ?count) WHERE {
+  ?s ?predicate ?o .
+  FILTER(STRSTARTS(STR(?predicate), "http://lack.climatesense.kmi.tools/ontology/"))
+  FILTER(?predicate != lack:since && ?predicate != lack:until
+      && ?predicate != lack:activeSince && ?predicate != lack:activeUntil)
+}
+GROUP BY ?predicate
+ORDER BY DESC(?count)
+LIMIT 15`);
+
+  const el = document.getElementById('chart-rels');
+  if (!r.results.bindings.length) { el.innerHTML = '<span class="empty">No data</span>'; return; }
+  const max = parseInt(r.results.bindings[0].count.value);
+  el.innerHTML = r.results.bindings.map(b => {
+    const n = parseInt(b.count.value);
+    const pct = Math.round(n / max * 100);
+    const name = shortIRI(b.predicate.value).replace('lack:', '');
+    return `<div class="bar-row">
+      <span class="lbl" title="${name}">${name}</span>
+      <div class="bar-wrap"><span class="bar-fill yellow" style="width:${pct}%"></span></div>
+      <span class="bar-cnt">${fmtNum(n)}</span>
+    </div>`;
+  }).join('');
+}
+
+async function loadSourceChart() {
+  const r = await sparqlQuery(`${PREFIXES}
+SELECT ?source (COUNT(*) AS ?count) WHERE {
+  ?e rdfs:seeAlso ?sourceURI .
+  BIND(
+    IF(CONTAINS(STR(?sourceURI), "desmog.com"), "Desmog",
+    IF(CONTAINS(STR(?sourceURI), "lobbymap.org"), "LobbyMap",
+    IF(CONTAINS(STR(?sourceURI), "influencemap.org"), "InfluenceMap",
+    "Other"))) AS ?source)
+}
+GROUP BY ?source
+ORDER BY DESC(?count)`);
+
+  const el = document.getElementById('chart-sources');
+  if (!r.results.bindings.length) { el.innerHTML = '<span class="empty">No data</span>'; return; }
+  const max = parseInt(r.results.bindings[0].count.value);
+  el.innerHTML = `<div style="max-width:500px">` + r.results.bindings.map(b => {
+    const n = parseInt(b.count.value);
+    const pct = Math.round(n / max * 100);
+    return `<div class="bar-row">
+      <span class="lbl">${b.source.value}</span>
+      <div class="bar-wrap"><span class="bar-fill" style="width:${pct}%"></span></div>
+      <span class="bar-cnt">${fmtNum(n)}</span>
+    </div>`;
+  }).join('') + `</div>`;
+}
+
+async function loadTopConnected() {
+  // Use MIN(?label) grouped by entity to guarantee one row per entity
+  const r = await sparqlQuery(`${PREFIXES}
+SELECT ?entity (MIN(?label) AS ?label) (COUNT(*) AS ?degree)
+WHERE {
+  ?entity rdfs:label ?label .
+  FILTER(STRSTARTS(STR(?entity), "http://lack.climatesense.kmi.tools/entity/"))
+  {
+    ?entity ?p ?o .
+    FILTER(STRSTARTS(STR(?p), "http://lack.climatesense.kmi.tools/ontology/"))
+  } UNION {
+    ?s ?p ?entity .
+    FILTER(STRSTARTS(STR(?p), "http://lack.climatesense.kmi.tools/ontology/"))
+  }
+}
+GROUP BY ?entity
+ORDER BY DESC(?degree)
+LIMIT 10`);
+
+  const el = document.getElementById('top-connected');
+  if (!r.results.bindings.length) { el.innerHTML = '<span class="empty">No data</span>'; return; }
+  el.innerHTML = `<ol class="top-list">` + r.results.bindings.map(b => {
+    const iri = b.entity.value;
+    const label = b.label.value;
+    const deg = b.degree.value;
+    return `<li>
+      <span class="clickable-entity" onclick="openEntity('${esc(iri)}','${esc(label)}')">${label}</span>
+      <span style="color:#aaa;font-size:0.78rem;margin-left:auto">${deg} relations</span>
+    </li>`;
+  }).join('') + `</ol>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 2: BROWSE BY TYPE
+// ══════════════════════════════════════════════════════════
+
+let allTypes = [];
+
+async function loadTypes() {
+  const listEl = document.getElementById('type-list');
+  listEl.innerHTML = '<span class="spinner"></span> Loading…';
+
+  const r = await sparqlQuery(`${PREFIXES}
+SELECT ?type (COUNT(DISTINCT ?e) AS ?count) WHERE {
+  ?e rdf:type ?type .
+  FILTER(STRSTARTS(STR(?type), "http://lack.climatesense.kmi.tools/type/"))
+}
+GROUP BY ?type
+ORDER BY DESC(?count)`);
+
+  allTypes = r.results.bindings.map(b => ({
+    iri: b.type.value,
+    name: typeName(b.type.value),
+    count: parseInt(b.count.value)
+  }));
+
+  renderTypeList(allTypes);
+
+  document.getElementById('type-filter').addEventListener('input', e => {
+    const q = e.target.value.toLowerCase();
+    renderTypeList(allTypes.filter(t => t.name.includes(q)));
+  });
+}
+
+function renderTypeList(types) {
+  const el = document.getElementById('type-list');
+  if (!types.length) { el.innerHTML = '<span class="empty">No types found</span>'; return; }
+  el.innerHTML = types.map(t =>
+    `<div class="type-item${selectedType === t.iri ? ' active' : ''}"
+         onclick="selectType('${esc(t.iri)}','${esc(t.name)}')">
+      <span>${t.name}</span>
+      <span class="badge">${fmtNum(t.count)}</span>
+    </div>`
+  ).join('');
+}
+
+async function selectType(iri, name) {
+  selectedType = iri;
+  renderTypeList(allTypes.filter(t => {
+    const q = document.getElementById('type-filter').value.toLowerCase();
+    return !q || t.name.includes(q);
+  }));
+
+  const panel = document.getElementById('type-entities-panel');
+  panel.innerHTML = `<div class="msg info"><span class="spinner"></span>Loading ${name} entities…</div>`;
+
+  // Use MIN(?label), MIN(?wd), MIN(?source) grouped by ?entity to get one row per entity
+  const r = await sparqlQuery(`${PREFIXES}
+SELECT ?entity (MIN(?label) AS ?label) (MIN(?wd) AS ?wd) (MIN(?source) AS ?source)
+WHERE {
+  ?entity rdf:type <${iri}> .
+  ?entity rdfs:label ?label .
+  OPTIONAL { ?entity owl:sameAs ?wd . FILTER(STRSTARTS(STR(?wd), "https://www.wikidata.org/")) }
+  OPTIONAL { ?entity rdfs:seeAlso ?source }
+}
+GROUP BY ?entity
+ORDER BY ?label`);
+
+  allTypeEntities = r.results.bindings;
+  currentTypePage = 1;
+  renderTypePage(name);
+}
+
+function renderTypePage(name) {
+  const panel = document.getElementById('type-entities-panel');
+  const total = allTypeEntities.length;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  const start = (currentTypePage - 1) * PAGE_SIZE;
+  const slice = allTypeEntities.slice(start, start + PAGE_SIZE);
+
+  let html = `<h3>${name} <span style="font-weight:normal;color:#888">(${fmtNum(total)})</span></h3>`;
+  html += `<div style="overflow-x:auto"><table class="data-table">
+    <thead><tr><th>Label</th><th>Wikidata</th><th>Source</th></tr></thead><tbody>`;
+  slice.forEach(b => {
+    const iri = b.entity.value;
+    const label = b.label?.value || iri;
+    const wd = b.wd?.value || '';
+    const src = b.source?.value || '';
+    const srcDomain = src ? (() => { try { return new URL(src).hostname.replace('www.',''); } catch(e) { return src; } })() : '';
+    html += `<tr onclick="openEntity('${esc(iri)}','${esc(label)}')">
+      <td><span class="clickable-entity">${label}</span></td>
+      <td>${wd ? `<a href="${wd}" target="_blank" onclick="event.stopPropagation()">Wikidata ↗</a>` : ''}</td>
+      <td>${src ? `<a href="${src}" target="_blank" onclick="event.stopPropagation()">${srcDomain} ↗</a>` : ''}</td>
+    </tr>`;
+  });
+  html += `</tbody></table></div>`;
+  html += renderPagination(currentTypePage, totalPages, 'typePage');
+  panel.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 3: ENTITY SEARCH & DETAIL
+// ══════════════════════════════════════════════════════════
+
+async function entitySearch() {
+  const q = document.getElementById('entity-search-input').value.trim();
+  if (!q) return;
+  if (!connected) { showMsg('entity-search-results', 'Connect to the endpoint first.', 'warn'); return; }
+
+  const resultsEl = document.getElementById('entity-search-results');
+  resultsEl.innerHTML = '<span class="spinner"></span> Searching…';
+
+  // GROUP BY ?entity with MIN(?label) and MIN(?typeIRI) — one row per entity
+  const r = await sparqlQuery(`${PREFIXES}
+SELECT ?entity (MIN(?label) AS ?label) (MIN(?typeIRI) AS ?typeIRI)
+WHERE {
+  ?entity rdfs:label ?label .
+  FILTER(CONTAINS(LCASE(?label), "${q.toLowerCase().replace(/"/g, '')}"))
+  OPTIONAL {
+    ?entity rdf:type ?typeIRI .
+    FILTER(STRSTARTS(STR(?typeIRI), "http://lack.climatesense.kmi.tools/type/"))
+  }
+}
+GROUP BY ?entity
+ORDER BY ?label
+LIMIT 100`);
+
+  const bindings = r.results.bindings;
+  if (!bindings.length) {
+    resultsEl.innerHTML = '<span class="empty">No entities found.</span>';
+    return;
+  }
+
+  let html = `<p style="font-size:0.82rem;color:#888;margin-bottom:0.5rem">${bindings.length} result(s)</p>
+  <div style="overflow-x:auto"><table class="data-table">
+    <thead><tr><th>Label</th><th>Type</th></tr></thead><tbody>`;
+  bindings.forEach(b => {
+    const iri = b.entity.value;
+    const label = b.label?.value || iri;
+    const typeIRI = b.typeIRI?.value || '';
+    const typeLbl = typeIRI ? typeName(typeIRI) : '—';
+    html += `<tr onclick="openEntity('${esc(iri)}','${esc(label)}')">
+      <td><span class="clickable-entity">${label}</span></td>
+      <td><code style="font-size:0.78rem">${typeLbl}</code></td>
+    </tr>`;
+  });
+  html += '</tbody></table></div>';
+  resultsEl.innerHTML = html;
+}
+
+document.getElementById('btn-entity-search').addEventListener('click', entitySearch);
+document.getElementById('entity-search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') entitySearch();
+});
+
+let searchTimer;
+document.getElementById('entity-search-input').addEventListener('input', () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(() => {
+    if (document.getElementById('entity-search-input').value.length >= 3) entitySearch();
+  }, 400);
+});
+
+async function openEntity(iri, label) {
+  document.querySelector('[data-tab="entities"]').click();
+
+  const searchPanel = document.getElementById('entity-search-panel');
+  const detailPanel = document.getElementById('entity-detail-panel');
+  searchPanel.style.display = 'none';
+  detailPanel.style.display = 'block';
+  detailPanel.innerHTML = `<div class="panel"><span class="spinner"></span> Loading entity…</div>`;
+
+  window.location.hash = 'entity=' + encodeURIComponent(iri);
+
+  try {
+    const rMeta = await sparqlQuery(`${PREFIXES}
+SELECT ?p ?o WHERE {
+  <${iri}> ?p ?o .
+}
+ORDER BY ?p`);
+
+    // Outgoing: one row per (pred, target) pair — target has a single IRI so no duplication issue
+    const rOut = await sparqlQuery(`${PREFIXES}
+SELECT ?pred ?target (MIN(?targetLabel) AS ?targetLabel) (MIN(?src) AS ?src)
+       (MIN(?since) AS ?since) (MIN(?until) AS ?until)
+WHERE {
+  <${iri}> ?pred ?target .
+  FILTER(STRSTARTS(STR(?pred), "http://lack.climatesense.kmi.tools/ontology/"))
+  FILTER(STRSTARTS(STR(?target), "http://lack.climatesense.kmi.tools/entity/"))
+  OPTIONAL { ?target rdfs:label ?targetLabel }
+  OPTIONAL { ?target rdfs:seeAlso ?src }
+  OPTIONAL {
+    ?stmt rdf:type rdf:Statement ;
+          rdf:subject <${iri}> ;
+          rdf:predicate ?pred ;
+          rdf:object ?target .
+    OPTIONAL { ?stmt lack:since ?since }
+    OPTIONAL { ?stmt lack:until ?until }
+  }
+}
+GROUP BY ?pred ?target
+ORDER BY ?pred ?targetLabel
+LIMIT 200`);
+
+    // Incoming: one row per (pred, source) pair
+    const rIn = await sparqlQuery(`${PREFIXES}
+SELECT ?pred ?source (MIN(?sourceLabel) AS ?sourceLabel) (MIN(?src) AS ?src)
+WHERE {
+  ?source ?pred <${iri}> .
+  FILTER(STRSTARTS(STR(?pred), "http://lack.climatesense.kmi.tools/ontology/"))
+  FILTER(STRSTARTS(STR(?source), "http://lack.climatesense.kmi.tools/entity/"))
+  OPTIONAL { ?source rdfs:label ?sourceLabel }
+  OPTIONAL { ?source rdfs:seeAlso ?src }
+}
+GROUP BY ?pred ?source
+ORDER BY ?pred ?sourceLabel
+LIMIT 200`);
+
+    let entityType = '', wdLink = '', sourceURL = '';
+    rMeta.results.bindings.forEach(b => {
+      const p = b.p.value;
+      if (p === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' && b.o.value.includes('/type/')) {
+        entityType = typeName(b.o.value);
+      }
+      if (p === 'http://www.w3.org/2002/07/owl#sameAs' && b.o.value.includes('wikidata')) {
+        wdLink = b.o.value;
+      }
+      if (p === 'http://www.w3.org/2000/01/rdf-schema#seeAlso') {
+        sourceURL = b.o.value;
+      }
+    });
+
+    let html = `<div class="panel">
+      <button class="back-btn" onclick="closeEntityDetail()">← Back to search</button>
+      <div class="entity-header">
+        <h2>${label}</h2>
+        <div class="entity-meta">
+          ${entityType ? `<span class="badge-type">lack-type:${entityType}</span>` : ''}
+          ${wdLink ? `<a class="badge-link" href="${wdLink}" target="_blank">Wikidata ↗</a>` : ''}
+          ${sourceURL ? `<a class="badge-link" href="${sourceURL}" target="_blank">Source ↗</a>` : ''}
+        </div>
+        <div style="font-size:0.78rem;color:#aaa;font-family:monospace;word-break:break-all">${iri}</div>
+      </div>`;
+
+    const outB = rOut.results.bindings;
+    html += `<h3>Outgoing relations (${outB.length})</h3>`;
+    if (outB.length) {
+      html += `<div style="overflow-x:auto"><table class="data-table">
+        <thead><tr><th>Predicate</th><th>Target</th><th>Since</th><th>Until</th><th>Source</th></tr></thead><tbody>`;
+      outB.forEach(b => {
+        const pred = shortIRI(b.pred.value).replace('lack:', '');
+        const tIRI = b.target.value;
+        const tLabel = b.targetLabel?.value || shortIRI(tIRI);
+        const since = b.since?.value || '';
+        const until = b.until?.value || '';
+        const src = b.src?.value || '';
+        const srcDomain = src ? (() => { try { return new URL(src).hostname.replace('www.',''); } catch(e) { return ''; } })() : '';
+        html += `<tr>
+          <td><code>${pred}</code></td>
+          <td><span class="clickable-entity" onclick="openEntity('${esc(tIRI)}','${esc(tLabel)}')">${tLabel}</span></td>
+          <td>${since}</td><td>${until}</td>
+          <td>${src ? `<a href="${src}" target="_blank">${srcDomain} ↗</a>` : ''}</td>
+        </tr>`;
+      });
+      html += '</tbody></table></div>';
+    } else { html += '<p class="empty">No outgoing relations.</p>'; }
+
+    const inB = rIn.results.bindings;
+    html += `<h3 style="margin-top:1.5rem">Incoming relations (${inB.length})</h3>`;
+    if (inB.length) {
+      html += `<div style="overflow-x:auto"><table class="data-table">
+        <thead><tr><th>Source</th><th>Predicate</th><th>Source link</th></tr></thead><tbody>`;
+      inB.forEach(b => {
+        const pred = shortIRI(b.pred.value).replace('lack:', '');
+        const sIRI = b.source.value;
+        const sLabel = b.sourceLabel?.value || shortIRI(sIRI);
+        const src = b.src?.value || '';
+        const srcDomain = src ? (() => { try { return new URL(src).hostname.replace('www.',''); } catch(e) { return ''; } })() : '';
+        html += `<tr>
+          <td><span class="clickable-entity" onclick="openEntity('${esc(sIRI)}','${esc(sLabel)}')">${sLabel}</span></td>
+          <td><code>${pred}</code></td>
+          <td>${src ? `<a href="${src}" target="_blank">${srcDomain} ↗</a>` : ''}</td>
+        </tr>`;
+      });
+      html += '</tbody></table></div>';
+    } else { html += '<p class="empty">No incoming relations.</p>'; }
+
+    html += '</div>';
+    detailPanel.innerHTML = html;
+
+  } catch (e) {
+    detailPanel.innerHTML = `<div class="panel"><div class="msg err">Error: ${e.message}</div>
+      <button class="back-btn" onclick="closeEntityDetail()">← Back to search</button></div>`;
+  }
+}
+
+function closeEntityDetail() {
+  document.getElementById('entity-search-panel').style.display = 'block';
+  document.getElementById('entity-detail-panel').style.display = 'none';
+  window.location.hash = 'entities';
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 4: SPARQL EDITOR
+// ══════════════════════════════════════════════════════════
+
+const qList = document.getElementById('example-query-list');
+EXAMPLE_QUERIES.forEach(q => {
+  const div = document.createElement('div');
+  div.className = 'query-item';
+  div.innerHTML = `<div class="q-title">${q.title}</div><div class="q-desc">${q.desc}</div>`;
+  div.addEventListener('click', () => { document.getElementById('sparql-editor').value = q.query; });
+  qList.appendChild(div);
+});
+
+document.getElementById('sparql-editor').value = EXAMPLE_QUERIES[0].query;
+
+document.getElementById('btn-sparql-run').addEventListener('click', runSparql);
+document.getElementById('sparql-editor').addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') runSparql();
+});
+
+async function runSparql() {
+  if (!connected) { document.getElementById('sparql-results').innerHTML = '<div class="msg warn">Connect to endpoint first.</div>'; return; }
+  const query = document.getElementById('sparql-editor').value.trim();
+  if (!query) return;
+
+  document.getElementById('sparql-results').innerHTML = '<span class="spinner"></span> Running…';
+  document.getElementById('btn-sparql-export').style.display = 'none';
+
+  addToHistory(query);
+
+  try {
+    const r = await sparqlQuery(query);
+    lastResults = r;
+    renderSparqlResults(r);
+  } catch (e) {
+    document.getElementById('sparql-results').innerHTML = `<div class="msg err"><strong>Query error:</strong> ${e.message}</div>`;
+    lastResults = null;
+  }
+}
+
+function renderSparqlResults(r) {
+  const el = document.getElementById('sparql-results');
+
+  if (r.boolean !== undefined) {
+    el.innerHTML = `<div class="msg ${r.boolean ? 'ok' : 'err'}">Result: <strong>${r.boolean}</strong></div>`;
+    return;
+  }
+
+  const vars = r.head?.vars || [];
+  const bindings = r.results?.bindings || [];
+
+  if (!bindings.length) {
+    el.innerHTML = '<div class="msg info">Query returned no results.</div>';
+    return;
+  }
+
+  document.getElementById('btn-sparql-export').style.display = 'inline-block';
+
+  let html = `<p style="font-size:0.8rem;color:#888;margin-bottom:0.5rem">${fmtNum(bindings.length)} row(s)</p>
+  <div style="overflow-x:auto"><table class="data-table">
+    <thead><tr>${vars.map(v => `<th>${v}</th>`).join('')}</tr></thead><tbody>`;
+
+  bindings.forEach(b => {
+    html += '<tr>' + vars.map(v => {
+      const val = b[v];
+      if (!val) return '<td>—</td>';
+      if (val.type === 'uri') {
+        const short = shortIRI(val.value);
+        if (val.value.includes('lack.climatesense.kmi.tools/entity/')) {
+          return `<td><span class="clickable-entity" onclick="openEntity('${esc(val.value)}','${esc(short)}')" title="${val.value}">${short}</span></td>`;
+        }
+        if (val.value.startsWith('http')) {
+          return `<td><a href="${val.value}" target="_blank" title="${val.value}">${short}</a></td>`;
+        }
+        return `<td><code>${short}</code></td>`;
+      }
+      return `<td>${val.value}</td>`;
+    }).join('') + '</tr>';
+  });
+
+  html += '</tbody></table></div>';
+  el.innerHTML = html;
+}
+
+document.getElementById('btn-sparql-export').addEventListener('click', () => {
+  if (!lastResults) return;
+  const vars = lastResults.head?.vars || [];
+  const bindings = lastResults.results?.bindings || [];
+  const rows = [vars.join(',')];
+  bindings.forEach(b => {
+    rows.push(vars.map(v => `"${(b[v]?.value || '').replace(/"/g, '""')}"`).join(','));
+  });
+  const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'lack-query-results.csv';
+  a.click();
+});
+
+function addToHistory(query) {
+  let history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  history = [query, ...history.filter(q => q !== query)].slice(0, 10);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  renderHistory();
+}
+
+function renderHistory() {
+  const sel = document.getElementById('history-select');
+  const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  sel.innerHTML = history.map((q, i) => {
+    const preview = q.replace(PREFIXES, '').trim().slice(0, 60).replace(/\n/g, ' ');
+    return `<option value="${i}">${preview}…</option>`;
+  }).join('');
+}
+
+document.getElementById('btn-load-history').addEventListener('click', () => {
+  const history = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  const idx = parseInt(document.getElementById('history-select').value);
+  if (!isNaN(idx) && history[idx]) {
+    document.getElementById('sparql-editor').value = history[idx];
+  }
+});
+
+renderHistory();
+
+// ══════════════════════════════════════════════════════════
+// PAGINATION
+// ══════════════════════════════════════════════════════════
+
+function renderPagination(current, total, handlerName) {
+  if (total <= 1) return '';
+  let html = `<div class="pagination">`;
+  if (current > 1) html += `<button class="page-btn" onclick="${handlerName}(${current-1})">‹ Prev</button>`;
+  const start = Math.max(1, current - 2);
+  const end = Math.min(total, current + 2);
+  if (start > 1) html += `<button class="page-btn" onclick="${handlerName}(1)">1</button>`;
+  if (start > 2) html += `<span style="color:#aaa">…</span>`;
+  for (let p = start; p <= end; p++) {
+    html += `<button class="page-btn${p===current?' active':''}" onclick="${handlerName}(${p})">${p}</button>`;
+  }
+  if (end < total - 1) html += `<span style="color:#aaa">…</span>`;
+  if (end < total) html += `<button class="page-btn" onclick="${handlerName}(${total})">${total}</button>`;
+  if (current < total) html += `<button class="page-btn" onclick="${handlerName}(${current+1})">Next ›</button>`;
+  html += `<span class="page-info">Page ${current} of ${total}</span></div>`;
+  return html;
+}
+
+window.typePage = function(p) { currentTypePage = p; renderTypePage(typeName(selectedType)); };
+
+// ══════════════════════════════════════════════════════════
+// UTILITIES
+// ══════════════════════════════════════════════════════════
+
+function esc(str) {
+  return (str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+function showMsg(containerId, text, type='info') {
+  document.getElementById(containerId).innerHTML = `<div class="msg ${type}">${text}</div>`;
+}
+
+window.openEntity = openEntity;
+</script>
+</body>
+</html>

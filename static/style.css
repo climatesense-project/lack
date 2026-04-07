@@ -97,7 +97,6 @@ main {
   max-width: 900px;
   width: 100%;
   margin: 2.5rem auto;
-  padding: 0 1.5rem;
   background-color: #ffffff;
   border-radius: 4px;
   padding: 2rem 2.5rem;
@@ -226,16 +225,6 @@ main pre code {
   color: inherit;
 }
 
-/* ── Stats/badge row (home page) ─────────────── */
-
-main table.stats {
-  display: table;
-  width: auto;
-  border: 1px solid #d4b84a;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
 /* ── Footer ──────────────────────────────────── */
 
 footer {
@@ -253,6 +242,135 @@ footer a {
 
 footer a:hover {
   text-decoration: underline;
+}
+
+/* ══════════════════════════════════════════════
+   STATS DASHBOARD (knowledge-graph.html)
+══════════════════════════════════════════════ */
+
+.stats-dashboard {
+  margin: 1.5rem 0 2rem;
+}
+
+/* Summary cards row */
+.stat-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  flex: 1 1 140px;
+  background: #f8f6f1;
+  border: 1px solid #d4b84a55;
+  border-top: 3px solid #d4b84a;
+  border-radius: 4px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2b2b2b;
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #777;
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Chart grid */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.chart-block {
+  background: #f8f6f1;
+  border: 1px solid #e0ddd5;
+  border-radius: 4px;
+  padding: 1rem 1.25rem;
+}
+
+.chart-block h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #5a7fa3;
+}
+
+/* Bar chart rows */
+.bar-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 52px;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.bar-label {
+  color: #2b2b2b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar-wrap {
+  background: #e8e5de;
+  border-radius: 2px;
+  height: 14px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  display: block;
+  height: 100%;
+  background: #5a7fa3;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.bar-count {
+  color: #777;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════
+   SCHEMA DIAGRAM (ontology.html)
+══════════════════════════════════════════════ */
+
+.schema-diagram {
+  margin: 1.5rem 0;
+  border: 1px solid #e0ddd5;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f8f6f1;
+}
+
+.schema-diagram svg {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* ── Responsive ──────────────────────────────── */
@@ -274,5 +392,17 @@ footer a:hover {
   nav ul li a {
     padding: 0.5rem 0.7rem;
     font-size: 0.85rem;
+  }
+
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bar-row {
+    grid-template-columns: 100px 1fr 44px;
+  }
+
+  .stat-card {
+    flex: 1 1 100px;
   }
 }

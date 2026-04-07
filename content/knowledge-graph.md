@@ -8,6 +8,12 @@ The LACK knowledge graph is constructed through a pipeline of relation extractio
 
 ---
 
+## KG at a Glance
+
+{{ stats_dashboard }}
+
+---
+
 ## Relation Extraction
 
 Relationships between persons and organisations are extracted automatically from source text using a large language model pipeline guided by the [LACK ontology](ontology.html).
@@ -41,8 +47,6 @@ Evaluated on 300 relations extracted from 8 Desmog profile pages:
 | True | 279 | 18 | 3 | 0.93 | 0.99 |
 | Valid | 272 | 12 | 16 | 0.907 | 0.95 |
 | Time info true | 239 | 34 | 27 | 0.797 | 0.91 |
-
-Following this evaluation, approximately **70,000 relations** were extracted from the full corpus.
 
 Ongoing work includes error analysis, ontology refinement, and evaluation on LobbyMap sources.
 

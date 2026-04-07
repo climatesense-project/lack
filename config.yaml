@@ -11,3 +11,5 @@ nav:
     file: "ontology.md"
   - label: "Download"
     file: "download.md"
+  - label: "Explore"
+    url: "static/explore.html"
