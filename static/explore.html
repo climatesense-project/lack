@@ -1158,13 +1158,13 @@ ORDER BY ?pred ?targetLabel
 LIMIT 200`);
 
     const rIn = await sparqlQuery(`${PREFIXES}
-SELECT ?pred ?source (MIN(?sourceLabell) AS ?sourceLabel) (MIN(?src) AS ?src)
+SELECT ?pred ?source (MIN(?sourceLabell) AS ?sourceLabel) (MIN(?srcc) AS ?src)
 WHERE {
   ?source ?pred <${iri}> .
   FILTER(STRSTARTS(STR(?pred), STR(lack:)))
   FILTER(STRSTARTS(STR(?source), STR(entity:)))
   OPTIONAL { ?source rdfs:label ?sourceLabell }
-  OPTIONAL { ?source rdfs:seeAlso ?src }
+  OPTIONAL { ?source rdfs:seeAlso ?srcc }
 }
 GROUP BY ?pred ?source
 ORDER BY ?pred ?sourceLabel
