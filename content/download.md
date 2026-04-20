@@ -34,6 +34,18 @@ Check the [GitHub repository](https://github.com/climatesense-project/lack) for 
 
 ---
 
+## SPARQL Endpoint
+
+The LACK knowledge graph is available as a live SPARQL endpoint powered by [QLever](https://github.com/ad-freiburg/qlever):
+
+```
+https://sparql.climatesense.kmi.tools/climatesense
+```
+
+You can query it interactively using the [Explore](explore/explore.html) page, or from any SPARQL client by sending queries with `Accept: application/sparql-results+json`.
+
+---
+
 ## Licence
 
 The LACK ontology and data are released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Please cite the ClimateSense project when using this resource.

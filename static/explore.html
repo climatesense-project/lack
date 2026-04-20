@@ -54,41 +54,16 @@ body {
 .site-nav a:hover { color: #d4b84a; }
 .site-nav a.active { color: #d4b84a; border-bottom: 3px solid #d4b84a; margin-bottom: -3px; }
 
-/* ── Endpoint bar ── */
+/* ── Endpoint status bar ── */
 .endpoint-bar {
   background: #2b2b2b;
   border-bottom: 1px solid #444;
-  padding: 0.5rem 1.5rem;
+  padding: 0.4rem 1.5rem;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: flex-end;
 }
-.endpoint-bar label { color: #aaa; font-size: 0.82rem; white-space: nowrap; }
-.endpoint-bar input {
-  flex: 1;
-  min-width: 260px;
-  background: #1e1e1e;
-  border: 1px solid #555;
-  border-radius: 4px;
-  color: #e0e0e0;
-  padding: 0.35rem 0.65rem;
-  font-size: 0.88rem;
-  font-family: monospace;
-}
-.endpoint-bar input:focus { outline: none; border-color: #d4b84a; }
-.btn-connect {
-  background: #d4b84a;
-  color: #2b2b2b;
-  border: none;
-  border-radius: 4px;
-  padding: 0.35rem 1rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-}
-.btn-connect:hover { background: #c4a83a; }
 .status-dot {
   width: 10px; height: 10px;
   border-radius: 50%;
@@ -341,22 +316,20 @@ code { font-family: monospace; background: #f0ede3; padding: 0.1em 0.35em; borde
   </ul>
 </nav>
 
-<!-- Endpoint configuration bar -->
+<!-- Endpoint status bar -->
 <div class="endpoint-bar">
-  <label for="ep-input">SPARQL endpoint</label>
-  <input type="text" id="ep-input" placeholder="http://localhost:9999/sparql" spellcheck="false">
-  <button class="btn-connect" id="btn-connect">Connect</button>
   <span class="status-dot" id="status-dot"></span>
-  <span class="status-label" id="status-label">Not connected</span>
+  <span class="status-label" id="status-label">Connecting…</span>
 </div>
 
 <!-- Main explorer -->
 <div class="explorer">
 
   <div id="cors-warning" class="msg warn" style="display:none">
-    <strong>CORS note:</strong> If queries fail, ensure your Virtuoso instance allows cross-origin requests.
-    In Virtuoso, set <code>CORS</code> headers in <code>virtuoso.ini</code> or use a local proxy.
-    For localhost, Virtuoso Open Source allows CORS by default on port 9999.
+    <strong>Endpoint unavailable.</strong> The LACK SPARQL endpoint at
+    <code>sparql.climatesense.kmi.tools</code> could not be reached.
+    This may be a temporary outage. Try refreshing the page, or
+    <a href="https://github.com/climatesense-project/lack" target="_blank">check the project page</a> for status updates.
   </div>
 
   <!-- Tabs -->
@@ -505,7 +478,7 @@ PREFIX rdfs:        <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd:         <http://www.w3.org/2001/XMLSchema#>
 `;
 
-const DEFAULT_ENDPOINT = 'http://localhost:9999/sparql';
+const DEFAULT_ENDPOINT = 'https://sparql.climatesense.kmi.tools/climatesense';
 const PAGE_SIZE = 25;
 const HISTORY_KEY = 'lack_sparql_history';
 const ENDPOINT_KEY = 'lack_sparql_endpoint';
@@ -745,13 +718,12 @@ let selectedType = null;
 let allTypeEntities = [];
 
 // ══════════════════════════════════════════════════════════
-// SPARQL FETCH (Virtuoso compatible)
+// SPARQL FETCH (QLever — standard Accept header, no vendor param)
 // ══════════════════════════════════════════════════════════
 
 async function sparqlQuery(query) {
   const url = new URL(endpoint);
   url.searchParams.set('query', query);
-  url.searchParams.set('format', 'application/sparql-results+json');
 
   const res = await fetch(url.toString(), {
     headers: { 'Accept': 'application/sparql-results+json' }
@@ -789,41 +761,36 @@ function fmtNum(n) {
 }
 
 // ══════════════════════════════════════════════════════════
-// ENDPOINT CONNECT
+// ENDPOINT CONNECT — auto-connects to the fixed public endpoint
 // ══════════════════════════════════════════════════════════
 
-document.getElementById('ep-input').value = endpoint;
-
 async function connect() {
-  endpoint = document.getElementById('ep-input').value.trim();
-  localStorage.setItem(ENDPOINT_KEY, endpoint);
-
   const dot = document.getElementById('status-dot');
   const lbl = document.getElementById('status-label');
   dot.className = 'status-dot';
-  lbl.textContent = 'Testing…';
+  lbl.textContent = 'Connecting…';
 
   try {
     const url = new URL(endpoint);
     url.searchParams.set('query', 'ASK {}');
-    url.searchParams.set('format', 'application/sparql-results+json');
     const res = await fetch(url.toString(), { headers: { 'Accept': 'application/sparql-results+json' } });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     connected = true;
     dot.className = 'status-dot ok';
-    lbl.textContent = 'Connected';
+    lbl.textContent = 'SPARQL endpoint connected';
     document.getElementById('cors-warning').style.display = 'none';
+    restoreTab();
     loadActiveTab();
   } catch (e) {
     connected = false;
     dot.className = 'status-dot err';
-    lbl.textContent = 'Unreachable — ' + e.message;
+    lbl.textContent = 'Endpoint unavailable';
     document.getElementById('cors-warning').style.display = 'block';
   }
 }
 
-document.getElementById('btn-connect').addEventListener('click', connect);
-document.getElementById('ep-input').addEventListener('keydown', e => { if (e.key === 'Enter') connect(); });
+// Auto-connect on page load
+window.addEventListener('load', connect);
 
 // ══════════════════════════════════════════════════════════
 // TABS
@@ -857,7 +824,6 @@ function restoreTab() {
   const btn = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
   if (btn) btn.click();
 }
-window.addEventListener('load', restoreTab);
 
 // ══════════════════════════════════════════════════════════
 // TAB 1: STATISTICS

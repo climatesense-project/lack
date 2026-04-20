@@ -123,8 +123,8 @@ Linked entities can be enriched with information from Wikidata, including additi
 - [x] Knowledge graph construction (v1.0, 9 April 2026)
 - [x] OWL inferencing
 - [x] KG.ttl published for download
+- [x] SPARQL endpoint live (`sparql.climatesense.kmi.tools`, powered by QLever)
 - [ ] Formal entity linking evaluation (gold standard)
 - [ ] Relation extraction error analysis
 - [ ] Desmog claim clustering (pairwise similarity)
-- [ ] SPARQL endpoint (public)
 - [ ] KG v2.0 with additional sources

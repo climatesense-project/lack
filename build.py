@@ -14,6 +14,7 @@ import re
 import shutil
 import json
 import yaml
+import argparse
 import markdown as md_lib
 from collections import defaultdict
 
@@ -306,9 +307,14 @@ def render_page(template, content_html, page_title, nav_html, site_title, base_u
 # ── Build ──────────────────────────────────────────────────────────────────────
 
 def main():
+    parser = argparse.ArgumentParser(description="Build the LACK static site.")
+    parser.add_argument("--local", action="store_true",
+                        help="Override base_url to '' for local serving from _site/")
+    args = parser.parse_args()
+
     config = load_config()
     site_title = config["site_title"]
-    base_url = config.get("base_url", "").rstrip("/")
+    base_url = "" if args.local else config.get("base_url", "").rstrip("/")
     nav_items = config["nav"]
 
     template = load_template()
