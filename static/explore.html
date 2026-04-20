@@ -868,9 +868,8 @@ SELECT (COUNT(DISTINCT ?e) AS ?n) WHERE { ?e rdf:type lack:Collective }`);
 
   const r4 = await sparqlQuery(`${PREFIXES}
 SELECT (COUNT(*) AS ?n) WHERE {
-  ?s ?p ?o .
-  FILTER(STRSTARTS(STR(?p), "http://lack.climatesense.kmi.tools/ontology/"))
-  FILTER(?s != rdf:Statement)
+	[] ?p [] .
+	FILTER(STRSTARTS(STR(?p), STR(lack:) ))
 }`);
   document.getElementById('sc-relations').textContent = fmtNum(sparqlVal(r4.results.bindings[0]?.n));
 
