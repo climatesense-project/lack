@@ -124,7 +124,7 @@ Linked entities can be enriched with information from Wikidata, including additi
 - [x] OWL inferencing
 - [x] KG.ttl published for download
 - [x] SPARQL endpoint live (`sparql.climatesense.kmi.tools`, powered by QLever)
-<!-- - [ ] Formal entity linking evaluation (gold standard)
+- [ ] Formal entity linking evaluation (gold standard)
 - [ ] Relation extraction error analysis
 - [ ] Desmog claim clustering (pairwise similarity)
-- [ ] KG v2.0 with additional sources -->
+- [ ] KG v2.0 with additional sources
