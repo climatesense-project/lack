@@ -1074,7 +1074,7 @@ WHERE {
   FILTER(CONTAINS(LCASE(?la), "${q.toLowerCase().replace(/"/g, '')}"))
   OPTIONAL {
     ?entity rdf:type ?typeIRI .
-    FILTER(STRSTARTS(STR(?typeIRI), "http://lack.climatesense.kmi.tools/type/"))
+    FILTER(STRSTARTS(STR(?typeIRI), "http://purl.net/climatesense/lack/type/"))
   }
 }
 GROUP BY ?entity
