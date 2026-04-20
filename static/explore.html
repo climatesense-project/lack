@@ -839,7 +839,7 @@ SELECT (COUNT(DISTINCT ?e) AS ?n) WHERE {
 
   const r6 = await sparqlQuery(`${PREFIXES}
 SELECT (MIN(?y) AS ?minY) (MAX(?y) AS ?maxY) WHERE {
-  ?s (lack:since|lack:until|lack:activeFrom|lack:activeUntil) ?y . . FILTER( STR(xsd:int(STR(?y))) = STR(?y) ) 
+  ?s (lack:since|lack:until|lack:activeFrom|lack:activeUntil) ?y . FILTER( STR(xsd:int(STR(?y))) = STR(?y) ) 
 }`);
   const b6 = r6.results.bindings[0];
   if (b6?.minY && b6?.maxY) {
