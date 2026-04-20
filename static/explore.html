@@ -450,6 +450,7 @@ const EXAMPLE_QUERIES = [
     desc: 'How many entities of each type exist?',
     query: `${PREFIXES}
 SELECT ?type (COUNT(DISTINCT ?e) AS ?count)
+FROM <https://purl.net/climatesense/lack>
 WHERE {
   ?e rdf:type ?type .
   FILTER(STRSTARTS(STR(?type), str(lack-type:)))
@@ -462,6 +463,7 @@ ORDER BY DESC(?count)`
     desc: 'Distribution of all LACK relation types',
     query: `${PREFIXES}
 SELECT ?predicate (COUNT(*) AS ?count)
+FROM <https://purl.net/climatesense/lack>
 WHERE {
   ?s ?predicate ?o .
   FILTER(STRSTARTS(STR(?predicate), str(lack:)))
@@ -475,6 +477,7 @@ ORDER BY DESC(?count)`
     desc: 'Who are members of a given organisation?',
     query: `${PREFIXES}
 SELECT ?personLabel ?orgLabel
+FROM <https://purl.net/climatesense/lack>
 WHERE {
   ?person lack:memberOf ?org .
   ?person rdfs:label ?personLabel .
@@ -488,6 +491,7 @@ ORDER BY ?personLabel`
     desc: 'Who funds whom? (top 50 funding relations)',
     query: `${PREFIXES}
 SELECT ?funderLabel ?fundedLabel
+FROM <https://purl.net/climatesense/lack>
 WHERE {
   ?funded lack:fundedBy ?funder .
   ?funder rdfs:label ?funderLabel .
@@ -501,6 +505,7 @@ LIMIT 50`
     desc: 'Persons who lead organisations',
     query: `${PREFIXES}
 SELECT ?personLabel ?orgLabel
+FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?person lack:leadsAt ?org .
   ?person rdfs:label ?personLabel .
@@ -514,6 +519,7 @@ LIMIT 100`
     desc: 'Entities with the most in+out relations (one row per entity)',
     query: `${PREFIXES}
 SELECT ?entity (MIN(?label) AS ?label) (COUNT(*) AS ?degree)
+FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?entity rdfs:label ?label .
   FILTER(STRSTARTS(STR(?entity), str(entity:)))
@@ -534,6 +540,7 @@ LIMIT 20`
     desc: 'Entities with a Wikidata identifier (one row per entity)',
     query: `${PREFIXES}
 SELECT ?entity (MIN(?label) AS ?label) (MIN(?wd) AS ?wd)
+FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?entity rdfs:label ?label .
   ?entity owl:sameAs ?wd .
@@ -548,6 +555,7 @@ LIMIT 100`
     desc: 'Relations with temporal annotations',
     query: `${PREFIXES}
 SELECT ?subjectLabel ?predicate ?objectLabel ?since ?until
+FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?stmt rdf:type rdf:Statement ;
         rdf:subject ?subject ;
@@ -567,6 +575,7 @@ LIMIT 50`
     desc: 'Which think tanks are funded by whom?',
     query: `${PREFIXES}
 SELECT (MIN(?tankLabel) AS ?tankLabel) (MIN(?funderLabel) AS ?funderLabel)
+FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?tank rdf:type lack-type:think_tank .
   ?tank lack:fundedBy ?funder .
@@ -581,6 +590,7 @@ ORDER BY ?tankLabel`
     desc: 'Persons whose profiles come from Desmog',
     query: `${PREFIXES}
 SELECT (MIN(?label) AS ?label) (MIN(?source) AS ?source)
+FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?p rdf:type lack:Person .
   ?p rdfs:label ?label .
@@ -596,6 +606,7 @@ LIMIT 100`
     desc: 'Derivation / spin-off relationships',
     query: `${PREFIXES}
 SELECT (MIN(?childLabel) AS ?childLabel) (MIN(?parentLabel) AS ?parentLabel)
+FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?child lack:derivedFrom ?parent .
   ?child rdfs:label ?childLabel .
@@ -609,6 +620,7 @@ ORDER BY ?parentLabel`
     desc: 'Entities active between 2010 and 2020',
     query: `${PREFIXES}
 SELECT ?entity (MIN(?label) AS ?label) (MIN(?since) AS ?since) (MIN(?until) AS ?until)
+FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?entity rdfs:label ?label .
   OPTIONAL { ?entity lack:activeSince ?since }
@@ -623,6 +635,7 @@ ORDER BY ?since ?label`
     desc: 'Members of coalition-type organisations',
     query: `${PREFIXES}
 SELECT (MIN(?coalitionLabel) AS ?coalitionLabel) (MIN(?memberLabel) AS ?memberLabel)
+FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?coalition rdf:type lack-type:coalition .
   ?coalition lack:hasMember ?member .
@@ -637,6 +650,7 @@ ORDER BY ?coalitionLabel ?memberLabel`
     desc: 'Persons who contributed to publications',
     query: `${PREFIXES}
 SELECT (MIN(?personLabel) AS ?personLabel) (MIN(?pubLabel) AS ?pubLabel)
+FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?person rdf:type lack:Person .
   ?person lack:contributedTo ?pub .
@@ -654,6 +668,7 @@ LIMIT 100`
     query: `${PREFIXES}
 # Replace the IRI below with any lack-entity: IRI
 SELECT ?predicate ?object ?objectLabel
+FROM <https://purl.net/climatesense/lack>	
 WHERE {
   BIND(lack-entity:6a8516329285034d40f8693c65f88e4f66e1a806 AS ?entity)
   ?entity ?predicate ?object .
@@ -810,35 +825,37 @@ async function loadStats() {
 
 async function loadSummaryCards() {
   const r1 = await sparqlQuery(`${PREFIXES}
-SELECT (COUNT(DISTINCT ?e) AS ?n) WHERE {
+SELECT (COUNT(DISTINCT ?e) AS ?n) 
+FROM <https://purl.net/climatesense/lack>
+WHERE {	
   ?e rdf:type ?t . FILTER(?t = lack:Person || ?t = lack:Collective)
 }`);
   document.getElementById('sc-entities').textContent = fmtNum(sparqlVal(r1.results.bindings[0]?.n));
 
   const r2 = await sparqlQuery(`${PREFIXES}
-SELECT (COUNT(DISTINCT ?e) AS ?n) WHERE { ?e rdf:type lack:Person }`);
+SELECT (COUNT(DISTINCT ?e) AS ?n) FROM <https://purl.net/climatesense/lack> WHERE { ?e rdf:type lack:Person }`);
   document.getElementById('sc-persons').textContent = fmtNum(sparqlVal(r2.results.bindings[0]?.n));
 
   const r3 = await sparqlQuery(`${PREFIXES}
-SELECT (COUNT(DISTINCT ?e) AS ?n) WHERE { ?e rdf:type lack:Collective }`);
+SELECT (COUNT(DISTINCT ?e) AS ?n) FROM <https://purl.net/climatesense/lack> WHERE { ?e rdf:type lack:Collective }`);
   document.getElementById('sc-collectives').textContent = fmtNum(sparqlVal(r3.results.bindings[0]?.n));
 
   const r4 = await sparqlQuery(`${PREFIXES}
-SELECT (COUNT(*) AS ?n) WHERE {
+SELECT (COUNT(*) AS ?n) FROM <https://purl.net/climatesense/lack> WHERE {
 	[] ?p [] .
 	FILTER(STRSTARTS(STR(?p), STR(lack:) ))
 }`);
   document.getElementById('sc-relations').textContent = fmtNum(sparqlVal(r4.results.bindings[0]?.n));
 
   const r5 = await sparqlQuery(`${PREFIXES}
-SELECT (COUNT(DISTINCT ?e) AS ?n) WHERE {
+SELECT (COUNT(DISTINCT ?e) AS ?n) FROM <https://purl.net/climatesense/lack> WHERE {
   ?e owl:sameAs ?wd .
   FILTER(STRSTARTS(STR(?wd), "https://www.wikidata.org/entity/"))
 }`);
   document.getElementById('sc-wikidata').textContent = fmtNum(sparqlVal(r5.results.bindings[0]?.n));
 
   const r6 = await sparqlQuery(`${PREFIXES}
-SELECT (MIN(?y) AS ?minY) (MAX(?y) AS ?maxY) WHERE {
+SELECT (MIN(?y) AS ?minY) (MAX(?y) AS ?maxY) FROM <https://purl.net/climatesense/lack> WHERE {
   ?s (lack:since|lack:until|lack:activeFrom|lack:activeUntil) ?y . FILTER( STR(xsd:int(STR(?y))) = STR(?y) ) 
 }`);
   const b6 = r6.results.bindings[0];
@@ -849,7 +866,7 @@ SELECT (MIN(?y) AS ?minY) (MAX(?y) AS ?maxY) WHERE {
 
 async function loadTypeChart() {
   const r = await sparqlQuery(`${PREFIXES}
-SELECT ?type (COUNT(DISTINCT ?e) AS ?count) WHERE {
+SELECT ?type (COUNT(DISTINCT ?e) AS ?count) FROM <https://purl.net/climatesense/lack> WHERE {
 ?e rdf:type ?type .
 FILTER(STRSTARTS(STR(?type), STR(lack-type:)))
 }
@@ -874,7 +891,7 @@ LIMIT 15`);
 
 async function loadRelChart() {
   const r = await sparqlQuery(`${PREFIXES}
-SELECT ?predicate (COUNT(*) AS ?count) WHERE {
+SELECT ?predicate (COUNT(*) AS ?count) FROM <https://purl.net/climatesense/lack> WHERE {
 ?s ?predicate ?o .
 FILTER(STRSTARTS(STR(?predicate), STR(lack:)))
 FILTER(?predicate != lack:since && ?predicate != lack:until
@@ -901,7 +918,7 @@ LIMIT 15`);
 
 async function loadSourceChart() {
   const r = await sparqlQuery(`${PREFIXES}
-SELECT ?source (COUNT(*) AS ?count) WHERE {
+SELECT ?source (COUNT(*) AS ?count) FROM <https://purl.net/climatesense/lack> WHERE {
   ?e rdfs:seeAlso ?sourceURI .
   BIND(
     IF(CONTAINS(STR(?sourceURI), "desmog.com"), "Desmog",
@@ -929,6 +946,7 @@ ORDER BY DESC(?count)`);
 async function loadTopConnected() {
   const r = await sparqlQuery(`${PREFIXES}
 SELECT ?entity (SAMPLE(?la) as ?label) (COUNT(*) AS ?degree)
+FROM <https://purl.net/climatesense/lack>
 WHERE {
 ?entity rdfs:label ?la .
 FILTER(STRSTARTS(STR(?entity), STR(entity:)))
@@ -969,7 +987,9 @@ async function loadTypes() {
   listEl.innerHTML = '<span class="spinner"></span> Loading…';
 
   const r = await sparqlQuery(`${PREFIXES}
-SELECT ?type (COUNT(DISTINCT ?e) AS ?count) WHERE {
+SELECT ?type (COUNT(DISTINCT ?e) AS ?count)
+FROM <https://purl.net/climatesense/lack>	  
+WHERE {
 ?e rdf:type ?type .
 FILTER(STRSTARTS(STR(?type), STR(lack-type:)))
 }
@@ -1014,6 +1034,7 @@ async function selectType(iri, name) {
 
   const r = await sparqlQuery(`${PREFIXES}
 SELECT ?entity (MIN(?la) AS ?label) (MIN(?wid) AS ?wd) (MIN(?sou) AS ?source)
+FROM <https://purl.net/climatesense/lack>	  
 WHERE {
   ?entity rdf:type <${iri}> .
   ?entity rdfs:label ?la .
@@ -1069,6 +1090,7 @@ async function entitySearch() {
 
   const r = await sparqlQuery(`${PREFIXES}
 SELECT ?entity (MIN(?la) AS ?label) (MIN(?typeIRI) AS ?typeIRI)
+FROM <https://purl.net/climatesense/lack>	  
 WHERE {
   ?entity rdfs:label ?la .
   FILTER(CONTAINS(LCASE(?la), "${q.toLowerCase().replace(/"/g, '')}"))
@@ -1130,7 +1152,7 @@ async function openEntity(iri, label) {
 
   try {
     const rMeta = await sparqlQuery(`${PREFIXES}
-SELECT ?p ?o WHERE {
+SELECT ?p ?o FROM <https://purl.net/climatesense/lack> WHERE {
   <${iri}> ?p ?o .
 }
 ORDER BY ?p`);
@@ -1138,6 +1160,7 @@ ORDER BY ?p`);
     const rOut = await sparqlQuery(`${PREFIXES}
 SELECT ?pred ?target (MIN(?targetLabell) AS ?targetLabel) (MIN(?srcc) AS ?src)
        (MIN(?sincee) AS ?since) (MIN(?untill) AS ?until)
+FROM <https://purl.net/climatesense/lack>
 WHERE {
 	<${iri}> ?pred ?target .
 	FILTER(STRSTARTS(STR(?pred), STR(lack:)))
@@ -1159,6 +1182,7 @@ LIMIT 200`);
 
     const rIn = await sparqlQuery(`${PREFIXES}
 SELECT ?pred ?source (MIN(?sourceLabell) AS ?sourceLabel) (MIN(?srcc) AS ?src)
+FROM <https://purl.net/climatesense/lack>
 WHERE {
   ?source ?pred <${iri}> .
   FILTER(STRSTARTS(STR(?pred), STR(lack:)))
