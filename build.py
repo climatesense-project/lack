@@ -12,7 +12,6 @@ Writes: _site/
 import os
 import re
 import shutil
-import json
 import yaml
 import argparse
 import markdown as md_lib
@@ -20,35 +19,19 @@ from collections import defaultdict
 
 # ── Paths ──────────────────────────────────────────────────────────────────────
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
-CONTENT_DIR = os.path.join(ROOT, "content")
-STATIC_DIR = os.path.join(ROOT, "static")
-TEMPLATE_FILE = os.path.join(ROOT, "templates", "base.html")
-CONFIG_FILE = os.path.join(ROOT, "config.yaml")
-OUTPUT_DIR = os.path.join(ROOT, "_site")
-KG_FILE = os.path.join(ROOT, "KG.ttl")
+ROOT         = os.path.dirname(os.path.abspath(__file__))
+CONTENT_DIR  = os.path.join(ROOT, "content")
+STATIC_DIR   = os.path.join(ROOT, "static")
+TEMPLATE_FILE= os.path.join(ROOT, "templates", "base.html")
+CONFIG_FILE  = os.path.join(ROOT, "config.yaml")
+OUTPUT_DIR   = os.path.join(ROOT, "_site")
+KG_FILE      = os.path.join(ROOT, "KG.ttl")
 KGSTATS_FILE = os.path.join(ROOT, "KGSTATS.md")
 
 # Extra files to copy verbatim into _site root
 VERBATIM_FILES = ["lack-ontology.ttl", "lack-ontology.omn", "KG.ttl"]
 
-# Relation predicates in the lack: namespace to count
-LACK_RELATIONS = [
-    "memberOf", "hasMember",
-    "employedBy", "hasEmployee",
-    "leadsAt", "hasLeader",
-    "fundedBy", "hasFunder",
-    "founded", "wasFoundedBy",
-    "contributedTo", "hasContributor",
-    "hasPartner",
-    "sponsored", "wasSponsoredBy",
-    "associatedWith",
-    "acquired", "wasAcquiredBy",
-    "derivedFrom", "hasDerivation",
-    "organised", "wasOrganisedBy",
-]
-
-# ── KGSTATS parsing ────────────────────────────────────────────────────────────
+# ── KGSTATS.md parsing ─────────────────────────────────────────────────────────
 
 def parse_kgstats(path):
     """
@@ -64,84 +47,82 @@ def parse_kgstats(path):
     with open(path, encoding="utf-8") as f:
         text = f.read()
 
-    # ── Split into sections ────────────────────────────────────────────────────
-    before = _extract_section(text, "BEFORE INFERENCING")
+    before   = _extract_section(text, "BEFORE INFERENCING")
     inferred = _extract_section(text, "INFERRED")
-    after = _extract_section(text, "AFTER INFERENCING")
+    after    = _extract_section(text, "AFTER INFERENCING")
 
-    # ── Entity counts ──────────────────────────────────────────────────────────
-    total_entities = _first_int(before, r"^(\d+)$")
-    entity_links = _parse_csv_block(before, "type,count,wikidata,dbpedia")
-
-    persons_row    = _row_by_key(entity_links, "lack/ns#Person")
+    # Entity counts
+    total_entities  = _first_int(before, r"^(\d+)$")
+    entity_links    = _parse_csv_block(before, "type,count,wikidata,dbpedia")
+    persons_row     = _row_by_key(entity_links, "lack/ns#Person")
     collectives_row = _row_by_key(entity_links, "lack/ns#Collective")
 
-    total_persons     = int(persons_row["count"])     if persons_row else 0
-    total_collectives = int(collectives_row["count"]) if collectives_row else 0
-    wikidata_persons  = int(persons_row["wikidata"])  if persons_row else 0
+    total_persons      = int(persons_row["count"])      if persons_row     else 0
+    total_collectives  = int(collectives_row["count"])  if collectives_row else 0
+    wikidata_persons   = int(persons_row["wikidata"])   if persons_row     else 0
     wikidata_collectives = int(collectives_row["wikidata"]) if collectives_row else 0
-    dbpedia_persons   = int(persons_row["dbpedia"])   if persons_row else 0
-    dbpedia_collectives = int(collectives_row["dbpedia"]) if collectives_row else 0
+    dbpedia_persons    = int(persons_row["dbpedia"])    if persons_row     else 0
+    dbpedia_collectives= int(collectives_row["dbpedia"])if collectives_row else 0
 
     wikidata_total = wikidata_persons + wikidata_collectives
     dbpedia_total  = dbpedia_persons  + dbpedia_collectives
-    unlinked       = total_entities - wikidata_total
+    unlinked       = total_entities   - wikidata_total
 
-    # ── Relation counts (asserted / inferred / total) ──────────────────────────
-    asserted_total = _first_int(before, r"^(\d+)$", skip=1)   # second bare integer
+    # Relation counts
+    asserted_total = _first_int(before,   r"^(\d+)$", skip=1)
     inferred_total = _first_int(inferred, r"^(\d+)$", skip=1)
-    after_total    = _first_int(after, r"^(\d+)$", skip=1)
+    after_total    = _first_int(after,    r"^(\d+)$", skip=1)
 
-    # ── Asserted relation breakdown ────────────────────────────────────────────
+    # Asserted relation breakdown
     rel_rows = _parse_csv_block(before, "relation,count")
     rel_map  = {r["relation"].split("#")[-1]: int(r["count"]) for r in rel_rows}
 
-    # ── Percentages ───────────────────────────────────────────────────────────
     def pct(n, total):
         return f"{round(n / total * 100)}%" if total else "n/a"
 
     placeholders = {
-        # Entity glance table
-        "kg_total_entities":   f"{total_entities:,}",
-        "kg_total_persons":    f"{total_persons:,}",
-        "kg_total_collectives":f"{total_collectives:,}",
-        "kg_wikidata_links":   f"{wikidata_total:,}",
-        "kg_dbpedia_links":    f"{dbpedia_total:,}",
-        # Relation glance table
-        "kg_asserted":         f"{asserted_total:,}",
-        "kg_inferred":         f"{inferred_total:,}",
-        "kg_total":            f"{after_total:,}",
-        # Entity linking section
-        "kg_wikidata_pct":     pct(wikidata_total, total_entities),
-        "kg_dbpedia_pct":      pct(dbpedia_total, total_entities),
-        "kg_unlinked":         f"{unlinked:,}",
-        "kg_unlinked_pct":     pct(unlinked, total_entities),
-        # Relation breakdown table — one key per predicate
+        "kg_total_entities":    f"{total_entities:,}",
+        "kg_total_persons":     f"{total_persons:,}",
+        "kg_total_collectives": f"{total_collectives:,}",
+        "kg_wikidata_links":    f"{wikidata_total:,}",
+        "kg_dbpedia_links":     f"{dbpedia_total:,}",
+        "kg_asserted":          f"{asserted_total:,}",
+        "kg_inferred":          f"{inferred_total:,}",
+        "kg_total":             f"{after_total:,}",
+        "kg_wikidata_pct":      pct(wikidata_total, total_entities),
+        "kg_dbpedia_pct":       pct(dbpedia_total,  total_entities),
+        "kg_unlinked":          f"{unlinked:,}",
+        "kg_unlinked_pct":      pct(unlinked, total_entities),
+        "kg_asserted_inf":      f"{asserted_total:,}",
+        "kg_inferred_inf":      f"{inferred_total:,}",
+        "kg_total_inf":         f"{after_total:,}",
         **{f"kg_rel_{k}": f"{v:,}" for k, v in rel_map.items()},
-        # Inferencing section totals (same values, different placeholders for clarity)
-        "kg_asserted_inf":     f"{asserted_total:,}",
-        "kg_inferred_inf":     f"{inferred_total:,}",
-        "kg_total_inf":        f"{after_total:,}",
     }
+
+    # Store raw numbers for dashboard rendering
+    placeholders["_total_entities"]  = total_entities
+    placeholders["_total_persons"]   = total_persons
+    placeholders["_total_collectives"]= total_collectives
+    placeholders["_asserted_total"]  = asserted_total
+    placeholders["_after_total"]     = after_total
+    placeholders["_wikidata_total"]  = wikidata_total
+    placeholders["_rel_map"]         = rel_map
 
     print(f"    Entities: {total_entities:,}  Asserted: {asserted_total:,}  "
           f"Inferred: {inferred_total:,}  Total: {after_total:,}")
     return placeholders
 
 
-# ── KGSTATS helpers ────────────────────────────────────────────────────────────
-
 def _extract_section(text, heading):
-    """Return the text between ### <heading> and the next ### (or end of file)."""
     pattern = re.compile(
-        r"###\s+" + re.escape(heading) + r".*?\n(.*?)(?=\n###|\Z)", re.DOTALL | re.IGNORECASE
+        r"###\s+" + re.escape(heading) + r".*?\n(.*?)(?=\n###|\Z)",
+        re.DOTALL | re.IGNORECASE
     )
     m = pattern.search(text)
     return m.group(1) if m else ""
 
 
 def _first_int(text, pattern, skip=0):
-    """Return the (skip+1)-th match of pattern as int, or 0."""
     matches = re.findall(pattern, text, re.MULTILINE)
     try:
         return int(matches[skip])
@@ -150,19 +131,12 @@ def _first_int(text, pattern, skip=0):
 
 
 def _parse_csv_block(text, header):
-    """
-    Find the CSV block starting with <header> and parse it into
-    a list of dicts keyed by column name.
-    """
     lines = text.splitlines()
-    rows = []
-    in_block = False
-    keys = []
+    rows, in_block, keys = [], False, []
     for line in lines:
         line = line.strip()
         if line == header:
-            keys = header.split(",")
-            in_block = True
+            keys, in_block = header.split(","), True
             continue
         if in_block:
             if not line or line.startswith("#"):
@@ -174,7 +148,6 @@ def _parse_csv_block(text, header):
 
 
 def _row_by_key(rows, key_fragment):
-    """Return the first row whose first-column value contains key_fragment."""
     for row in rows:
         if key_fragment in list(row.values())[0]:
             return row
@@ -185,174 +158,159 @@ def apply_kg_placeholders(text, placeholders):
     """Replace all {{ kg_* }} tokens in text with values from placeholders dict."""
     def replacer(m):
         key = m.group(1).strip()
-        return placeholders.get(key, m.group(0))  # leave unknown tokens as-is
+        return placeholders.get(key, m.group(0))
     return re.sub(r"\{\{\s*(kg_\w+)\s*\}\}", replacer, text)
 
 
-# ── KG parsing (regex, for stats dashboard) ────────────────────────────────────
+# ── SPARQL queries (rdflib) ────────────────────────────────────────────────────
 
-def parse_kg_stats(kg_path):
+def query_kg_sparql(kg_path):
     """
-    Parse KG.ttl with simple regex (no rdflib dependency).
-    Returns a dict of stats for use in templates.
+    Run three targeted SPARQL queries against KG.ttl using rdflib.
+    Returns a dict with: source_counts, year_range, subtype_counts.
     """
     if not os.path.exists(kg_path):
-        print(f"  WARNING: {kg_path} not found — skipping stats generation.")
-        return None
+        print(f"  WARNING: {kg_path} not found — SPARQL stats unavailable.")
+        return {"source_counts": {}, "year_range": (None, None), "subtype_counts": []}
 
-    print("  Parsing KG.ttl for stats...")
+    print("  Loading KG.ttl for SPARQL queries (this may take a moment)...")
+    try:
+        from rdflib import Graph, Namespace
+        from rdflib.namespace import RDF, RDFS, OWL, XSD
+    except ImportError:
+        print("  WARNING: rdflib not installed — SPARQL stats unavailable.")
+        return {"source_counts": {}, "year_range": (None, None), "subtype_counts": []}
 
-    type_counts = defaultdict(int)
-    relation_counts = defaultdict(int)
-    source_counts = defaultdict(int)
-    year_counts = defaultdict(int)
-    wikidata_linked = 0
+    g = Graph()
+    g.parse(kg_path, format="turtle")
+    print(f"  Loaded {len(g):,} triples.")
 
-    re_type = re.compile(r'rdf:type\s+lack-type:(\w+)')
-    re_person = re.compile(r'rdf:type\s+lack:Person|rdf:type\s+<https://purl\.net/climatesense/lack/ns#Person>')
-    re_relation = re.compile(r'\b(?:lack:)(' + '|'.join(LACK_RELATIONS) + r')\b')
-    re_see_also = re.compile(r'rdfs:seeAlso\s+"(https?://[^"]+)"')
-    re_year = re.compile(r'lack:(?:since|until|activeSince|activeUntil)\s+"(\d{4})"|<https://purl\.net/climatesense/lack/ns#(?:since|until|activeSince|activeUntil)>\s+"(\d{4})"|"(\d{4})"\^\^xsd:gYear')
-    re_wikidata = re.compile(r'owl:sameAs\s+<https://www\.wikidata\.org/entity/')
-    entity_iris = set()
+    # ── Query 1: Evidence source counts ───────────────────────────────────────
+    source_q = """
+    PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+    SELECT ?source (COUNT(*) AS ?count) WHERE {
+      ?e rdfs:seeAlso ?url .
+      BIND(
+        IF(CONTAINS(STR(?url), "desmog.com"),      "Desmog",
+        IF(CONTAINS(STR(?url), "lobbymap.org"),    "LobbyMap",
+        IF(CONTAINS(STR(?url), "influencemap.org"),"InfluenceMap",
+        "Other"))) AS ?source)
+    }
+    GROUP BY ?source
+    ORDER BY DESC(?count)
+    """
+    source_counts = {}
+    for row in g.query(source_q):
+        source_counts[str(row.source)] = int(row["count"])
 
-    with open(kg_path, encoding="utf-8", errors="replace") as f:
-        content = f.read()
+    # ── Query 2: Year range ────────────────────────────────────────────────────
+    year_q = """
+    PREFIX lack: <https://purl.net/climatesense/lack/ns#>
+    PREFIX xsd:  <http://www.w3.org/2001/XMLSchema#>
+    SELECT (MIN(?y) AS ?minY) (MAX(?y) AS ?maxY) WHERE {
+      ?s ?p ?y .
+      FILTER(?p IN (lack:since, lack:until, lack:activeSince, lack:activeUntil))
+      FILTER(DATATYPE(?y) = xsd:gYear)
+    }
+    """
+    year_range = (None, None)
+    for row in g.query(year_q):
+        if row.minY and row.maxY:
+            year_range = (str(row.minY)[:4], str(row.maxY)[:4])
 
-    for m in re.finditer(r'^(lack-entity:[a-f0-9]+)\s*\n', content, re.MULTILINE):
-        entity_iris.add(m.group(1))
-    total_entities = len(entity_iris)
+    # ── Query 3: Entity counts per lack-type subtype ───────────────────────────
+    subtype_q = """
+    PREFIX lack-type: <https://purl.net/climatesense/lack/type/>
+    PREFIX rdf:       <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+    SELECT ?subtype (COUNT(DISTINCT ?e) AS ?count) WHERE {
+      ?e rdf:type ?subtype .
+      FILTER(STRSTARTS(STR(?subtype), STR(lack-type:)))
+    }
+    GROUP BY ?subtype
+    ORDER BY DESC(?count)
+    """
+    subtype_counts = []
+    for row in g.query(subtype_q):
+        label = str(row.subtype).split("/")[-1].replace("_", " ")
+        subtype_counts.append((label, int(row["count"])))
 
-    wikidata_linked = len(re_wikidata.findall(content))
-
-    for m in re_type.finditer(content):
-        t = m.group(1)
-        type_counts[t] += 1
-
-    type_counts["person"] = len(re_person.findall(content))
-
-    for m in re_relation.finditer(content):
-        relation_counts[m.group(1)] += 1
-
-    for m in re_see_also.finditer(content):
-        url = m.group(1)
-        if "desmog.com" in url:
-            source_counts["Desmog"] += 1
-        elif "lobbymap.org" in url or "influencemap.org" in url:
-            source_counts["LobbyMap / InfluenceMap"] += 1
-        else:
-            source_counts["Other"] += 1
-
-    for m in re_year.finditer(content):
-        raw = m.group(1) or m.group(2) or m.group(3)
-        if raw:
-            y = int(raw)
-            if 1900 <= y <= 2030:
-                year_counts[y] += 1
-
-    total_relations = sum(relation_counts.values())
-
-    GROUP_MAP = {
-        "person": "Persons",
-        "company": "Companies",
-        "think_tank": "Think tanks",
-        "foundation": "Foundations",
-        "government_agency": "Government agencies",
-        "university": "Universities",
-        "coalition": "Coalitions",
-        "publication": "Publications",
-        "industry_association": "Industry associations",
-        "trade_association": "Trade associations",
-        "professional_association": "Professional associations",
-        "consulting_firm": "Consulting firms",
-        "political_party": "Political parties",
-        "research_institute": "Research institutes",
-        "program": "Programs",
-        "law_firm": "Law firms",
-        "journal": "Journals",
-        "country": "Countries",
-        "ngo": "NGOs",
+    print(f"    Sources: {source_counts}  Year range: {year_range}  "
+          f"Subtypes: {len(subtype_counts)}")
+    return {
+        "source_counts":  source_counts,
+        "year_range":     year_range,
+        "subtype_counts": subtype_counts,
     }
 
-    grouped = defaultdict(int)
-    other_count = 0
-    for k, v in type_counts.items():
-        label = GROUP_MAP.get(k)
-        if label:
-            grouped[label] += v
-        else:
-            other_count += v
-    if other_count:
-        grouped["Other"] += other_count
 
-    entity_chart = sorted(grouped.items(), key=lambda x: -x[1])
-    relation_chart = sorted(relation_counts.items(), key=lambda x: -x[1])
+# ── Stats dashboard HTML ───────────────────────────────────────────────────────
 
-    years_sorted = sorted(year_counts.keys())
-    year_range = (years_sorted[0], years_sorted[-1]) if years_sorted else (None, None)
-
-    stats = {
-        "total_entities": total_entities,
-        "total_relations": total_relations,
-        "wikidata_linked": wikidata_linked,
-        "entity_chart": entity_chart,
-        "relation_chart": relation_chart,
-        "source_counts": dict(source_counts),
-        "year_range": year_range,
-    }
-
-    print(f"    Entities: {total_entities}, Relations: {total_relations}, Wikidata links: {wikidata_linked}")
-    return stats
-
-
-def render_stats_html(stats):
-    """Produce an HTML block with bar charts for entity types and relation counts."""
-    if stats is None:
+def render_stats_html(kg_placeholders, sparql_stats):
+    """
+    Build the static stats dashboard HTML from KGSTATS.md data
+    and the three SPARQL query results.
+    """
+    if not kg_placeholders:
         return ""
 
-    def bar_chart(items, max_val):
+    def bar_chart(items, max_val, css_class=""):
         rows = []
         for label, count in items:
             pct = int(count / max_val * 100) if max_val else 0
             rows.append(
                 f'<div class="bar-row">'
                 f'<span class="bar-label">{label}</span>'
-                f'<span class="bar-wrap"><span class="bar-fill" style="width:{pct}%"></span></span>'
+                f'<span class="bar-wrap"><span class="bar-fill{" " + css_class if css_class else ""}"'
+                f' style="width:{pct}%"></span></span>'
                 f'<span class="bar-count">{count:,}</span>'
                 f'</div>'
             )
         return "\n".join(rows)
 
-    TOP_TYPES = 12
-    TOP_RELS = 10
+    # Summary cards
+    total_entities   = kg_placeholders["_total_entities"]
+    total_persons    = kg_placeholders["_total_persons"]
+    total_collectives= kg_placeholders["_total_collectives"]
+    after_total      = kg_placeholders["_after_total"]
+    wikidata_total   = kg_placeholders["_wikidata_total"]
+    yr               = sparql_stats["year_range"]
+    year_str         = f"{yr[0]}–{yr[1]}" if yr[0] else "n/a"
 
-    entity_items = stats["entity_chart"][:TOP_TYPES]
-    rel_items = stats["relation_chart"][:TOP_RELS]
+    # Entity subtype bar chart (from SPARQL)
+    subtype_items = sparql_stats["subtype_counts"][:12]
+    max_subtype   = subtype_items[0][1] if subtype_items else 1
 
-    max_entity = entity_items[0][1] if entity_items else 1
-    max_rel = rel_items[0][1] if rel_items else 1
+    # Relation breakdown bar chart (from KGSTATS.md)
+    rel_map   = kg_placeholders["_rel_map"]
+    rel_items = sorted(rel_map.items(), key=lambda x: -x[1])[:10]
+    max_rel   = rel_items[0][1] if rel_items else 1
 
-    yr = stats["year_range"]
-    year_str = f"{yr[0]}–{yr[1]}" if yr[0] else "n/a"
-
-    src = stats["source_counts"]
-    src_items = sorted(src.items(), key=lambda x: -x[1])
-    max_src = src_items[0][1] if src_items else 1
+    # Source bar chart (from SPARQL)
+    src_items = sorted(sparql_stats["source_counts"].items(), key=lambda x: -x[1])
+    max_src   = src_items[0][1] if src_items else 1
 
     html = f"""
 <div class="stats-dashboard">
 
   <div class="stat-cards">
     <div class="stat-card">
-      <span class="stat-number">{stats['total_entities']:,}</span>
+      <span class="stat-number">{total_entities:,}</span>
       <span class="stat-label">entities</span>
     </div>
     <div class="stat-card">
-      <span class="stat-number">{stats['total_relations']:,}</span>
-      <span class="stat-label">relations</span>
+      <span class="stat-number">{total_persons:,}</span>
+      <span class="stat-label">persons</span>
     </div>
     <div class="stat-card">
-      <span class="stat-number">{stats['wikidata_linked']:,}</span>
+      <span class="stat-number">{total_collectives:,}</span>
+      <span class="stat-label">collectives</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">{after_total:,}</span>
+      <span class="stat-label">total triples</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-number">{wikidata_total:,}</span>
       <span class="stat-label">Wikidata links</span>
     </div>
     <div class="stat-card">
@@ -363,15 +321,15 @@ def render_stats_html(stats):
 
   <div class="chart-grid">
     <div class="chart-block">
-      <h3>Entities by type</h3>
+      <h3>Entities by subtype</h3>
       <div class="bar-chart">
-        {bar_chart(entity_items, max_entity)}
+        {bar_chart(subtype_items, max_subtype)}
       </div>
     </div>
     <div class="chart-block">
-      <h3>Relations by predicate</h3>
+      <h3>Relations by predicate (asserted)</h3>
       <div class="bar-chart">
-        {bar_chart(rel_items, max_rel)}
+        {bar_chart(rel_items, max_rel, css_class="yellow")}
       </div>
     </div>
   </div>
@@ -420,17 +378,15 @@ def html_filename(md_filename):
 
 
 def build_nav(nav_items, base_url, current_slug):
-    """Render nav <li> items. Supports both file-based and url-based items."""
     items = []
     for item in nav_items:
         if "file" in item:
-            slug = slug_from_filename(item["file"])
-            href = f"{base_url}/{html_filename(item['file'])}"
-            active = ' class="active"' if slug == current_slug else ""
+            slug  = slug_from_filename(item["file"])
+            href  = f"{base_url}/{html_filename(item['file'])}"
+            active= ' class="active"' if slug == current_slug else ""
         else:
-            # url-based item (e.g. Explore)
-            href = f"{base_url}/{item['url']}"
-            active = ' class="active"' if item.get("label", "") == current_slug else ""
+            href  = f"{base_url}/{item['url']}"
+            active= ' class="active"' if item.get("label", "") == current_slug else ""
         items.append(f'      <li><a href="{href}"{active}>{item["label"]}</a></li>')
     return "\n".join(items)
 
@@ -454,30 +410,28 @@ def main():
                         help="Override base_url to '' for local serving from _site/")
     args = parser.parse_args()
 
-    config = load_config()
+    config     = load_config()
     site_title = config["site_title"]
-    base_url = "" if args.local else config.get("base_url", "").rstrip("/")
-    nav_items = config["nav"]
+    base_url   = "" if args.local else config.get("base_url", "").rstrip("/")
+    nav_items  = config["nav"]
+    template   = load_template()
 
-    template = load_template()
-
-    # Parse KG stats
-    kg_stats = parse_kg_stats(KG_FILE)
-    # Parse KGSTATS.md for knowledge-graph.md placeholder substitution
+    # Parse stats sources
     kg_placeholders = parse_kgstats(KGSTATS_FILE)
-    stats_html = render_stats_html(kg_stats)
+    sparql_stats    = query_kg_sparql(KG_FILE)
+    stats_html      = render_stats_html(kg_placeholders, sparql_stats)
 
     # Clean and recreate output directory
     if os.path.exists(OUTPUT_DIR):
         shutil.rmtree(OUTPUT_DIR)
     os.makedirs(OUTPUT_DIR)
 
-    # Copy static assets (includes explore.html)
+    # Copy static assets
     out_static = os.path.join(OUTPUT_DIR, "static")
     shutil.copytree(STATIC_DIR, out_static)
     print(f"  Copied static/ → _site/static/")
 
-    # Copy verbatim files (ontology + data)
+    # Copy verbatim files
     for fname in VERBATIM_FILES:
         src = os.path.join(ROOT, fname)
         if os.path.exists(src):
@@ -486,17 +440,15 @@ def main():
         else:
             print(f"  WARNING: {fname} not found, skipping.")
 
-    # Markdown extensions
     md_extensions = ["tables", "fenced_code", "attr_list", "def_list"]
 
-    # Build each markdown page (skip url-based nav items)
     for item in nav_items:
         if "url" in item:
             print(f"  Skipped nav item '{item['label']}' (static URL: {item['url']})")
             continue
 
-        md_file = item["file"]
-        md_path = os.path.join(CONTENT_DIR, md_file)
+        md_file  = item["file"]
+        md_path  = os.path.join(CONTENT_DIR, md_file)
 
         if not os.path.exists(md_path):
             print(f"  WARNING: {md_path} not found, skipping.")
@@ -506,23 +458,23 @@ def main():
             raw = f.read()
 
         meta, body = parse_frontmatter(raw)
+
         # Apply KG placeholders before markdown rendering
         if md_file == "knowledge-graph.md":
             body = apply_kg_placeholders(body, kg_placeholders)
-        page_title = meta.get("title", item["label"])
 
+        page_title   = meta.get("title", item["label"])
         content_html = md_lib.markdown(body, extensions=md_extensions)
         content_html = content_html.replace("{{ stats_dashboard }}", stats_html)
 
         current_slug = slug_from_filename(md_file)
-        nav_html = build_nav(nav_items, base_url, current_slug)
-
-        page_html = render_page(
+        nav_html     = build_nav(nav_items, base_url, current_slug)
+        page_html    = render_page(
             template, content_html, page_title, nav_html, site_title, base_url
         )
 
         out_filename = html_filename(md_file)
-        out_path = os.path.join(OUTPUT_DIR, out_filename)
+        out_path     = os.path.join(OUTPUT_DIR, out_filename)
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(page_html)
 
