@@ -702,7 +702,10 @@ async function sparqlQuery(query) {
     headers: { 'Accept': 'application/sparql-results+json' }
   });
 
-  if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`HTTP ${res.status}: ${res.statusText}\n${body}`);
+  }
   const json = await res.json();
   return json;
 }
@@ -1315,8 +1318,8 @@ async function runSparql() {
     lastResults = r;
     renderSparqlResults(r);
   } catch (e) {
-    document.getElementById('sparql-results').innerHTML = `<div class="msg err"><strong>Query error:</strong> ${e.message}</div>`;
-    lastResults = null;
+    document.getElementById('sparql-results').innerHTML = `<div class="msg err"><strong>Query error:</strong><pre style="margin:0.5rem 0 0; white-space:pre-wrap; font-size:0.8rem">${e.message}</pre></div>`;
+	lastResults = null;
   }
 }
 
