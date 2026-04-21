@@ -927,8 +927,35 @@ LIMIT 15`);
   }).join('');
 }
 
-async function loadRelChart() {
+async function fetchInversePairs() {
   const r = await sparqlQuery(`${PREFIXES}
+SELECT ?p ?inv WHERE {
+  ?p owl:inverseOf ?inv .
+  FILTER(STRSTARTS(STR(?p), STR(lack:)))
+  FILTER(STRSTARTS(STR(?inv), STR(lack:)))
+}`);
+  const map = new Map();
+  r.results.bindings.forEach(b => {
+    const p = b.p.value;
+    const inv = b.inv.value;
+    if (!map.has(p) && !map.has(inv)) {
+      // pick canonical: prefer the one whose local name doesn't start with 'has' or 'is'
+      const pLocal = p.replace('https://purl.net/climatesense/lack/ns#', '');
+      const invLocal = inv.replace('https://purl.net/climatesense/lack/ns#', '');
+      const pIsIncoming = /^(has|is)[A-Z]/.test(pLocal);
+      const canonical = pIsIncoming ? inv : p;
+      const inverse = pIsIncoming ? p : inv;
+      const canonicalLocal = pIsIncoming ? invLocal : pLocal;
+      const inverseLocal = pIsIncoming ? pLocal : invLocal;
+      map.set(inverse, { canonical, label: `${canonicalLocal}/${inverseLocal}` });
+    }
+  });
+  return map;
+}
+
+async function loadRelChart() {
+  const [r, inverseMap] = await Promise.all([
+    sparqlQuery(`${PREFIXES}
 SELECT ?predicate (COUNT(*) AS ?count) FROM <https://purl.net/climatesense/lack> WHERE {
 ?s ?predicate ?o .
 FILTER(STRSTARTS(STR(?predicate), STR(lack:)))
@@ -937,19 +964,42 @@ FILTER(?predicate != lack:since && ?predicate != lack:until
 }
 GROUP BY ?predicate
 ORDER BY DESC(?count)
-LIMIT 15`);
+LIMIT 30`),
+    fetchInversePairs()
+  ]);
 
   const el = document.getElementById('chart-rels');
   if (!r.results.bindings.length) { el.innerHTML = '<span class="empty">No data</span>'; return; }
-  const max = parseInt(r.results.bindings[0].count.value);
-  el.innerHTML = r.results.bindings.map(b => {
-    const n = parseInt(b.count.value);
-    const pct = Math.round(n / max * 100);
-    const name = shortIRI(b.predicate.value).replace('lack:', '');
+
+  const seen = new Set();
+  const rows = [];
+  r.results.bindings.forEach(b => {
+    const iri = b.predicate.value;
+    if (seen.has(iri)) return;
+    if (inverseMap.has(iri)) {
+      // this is an inverse of a canonical — skip, canonical will carry the label
+      seen.add(iri);
+      return;
+    }
+    seen.add(iri);
+    // check if this canonical has an inverse entry pointing to it
+    const label = (() => {
+      for (const [inv, entry] of inverseMap) {
+        if (entry.canonical === iri) return entry.label;
+      }
+      return b.predicate.value.replace('https://purl.net/climatesense/lack/ns#', '');
+    })();
+    rows.push({ label, count: parseInt(b.count.value) });
+    if (rows.length === 15) return;
+  });
+
+  const max = rows[0].count;
+  el.innerHTML = rows.map(row => {
+    const pct = Math.round(row.count / max * 100);
     return `<div class="bar-row">
-      <span class="lbl" title="${name}">${name}</span>
+      <span class="lbl" title="${row.label}">${row.label}</span>
       <div class="bar-wrap"><span class="bar-fill yellow" style="width:${pct}%"></span></div>
-      <span class="bar-cnt">${fmtNum(n)}</span>
+      <span class="bar-cnt">${fmtNum(row.count)}</span>
     </div>`;
   }).join('');
 }
