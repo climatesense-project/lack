@@ -265,6 +265,7 @@ code { font-family: monospace; background: #f7fbf7; padding: 0.1em 0.35em; borde
     <li><a href="/lack/knowledge-graph.html">Knowledge Graph</a></li>
     <li><a href="/lack/ontology.html">Ontology</a></li>
     <li><a href="/lack/download.html">Download</a></li>
+    <li><a href="/lack/case-studies.html">Case Studies</a></li>
     <li><a href="/lack/static/explore.html" class="active">Explore</a></li>
   </ul>
 </nav>
@@ -1095,8 +1096,9 @@ async function entitySearch() {
 SELECT ?entity (MIN(?la) AS ?label) (MIN(?typeIRI) AS ?typeIRI)
 FROM <https://purl.net/climatesense/lack>	  
 WHERE {
+	?s ql:contains-entity ?la ;
+	   ql:contains-word "${q.toLowerCase().replace(/"/g, '')}" .
   ?entity rdfs:label ?la .
-  FILTER(CONTAINS(LCASE(?la), "${q.toLowerCase().replace(/"/g, '')}"))
   OPTIONAL {
     ?entity rdf:type ?typeIRI .
     FILTER(STRSTARTS(STR(?typeIRI), "http://purl.net/climatesense/lack/type/"))
