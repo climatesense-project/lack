@@ -868,7 +868,7 @@ async function loadTypeChart() {
   const r = await sparqlQuery(`${PREFIXES}
 SELECT ?type (COUNT(DISTINCT ?e) AS ?count) FROM <https://purl.net/climatesense/lack> WHERE {
 ?e rdf:type ?type .
-FILTER(STRSTARTS(STR(?type), STR(lack-type:)))
+#FILTER(STRSTARTS(STR(?type), STR(lack-type:)))
 }
 GROUP BY ?type
 ORDER BY DESC(?count)
