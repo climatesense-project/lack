@@ -28,8 +28,6 @@ The LACK knowledge graph (v1.0, released 9 April 2026) is constructed through a 
 | **Inferred (entailed)** | **{{ kg_inferred }}** |
 | **Total after inferencing** | **{{ kg_total }}** |
 
-{{ stats_dashboard }}
-
 ---
 
 ## Relation Extraction

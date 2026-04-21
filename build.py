@@ -421,8 +421,8 @@ def main():
 
     # Parse stats sources
     kg_placeholders = parse_kgstats(KGSTATS_FILE)
-    sparql_stats    = query_kg_sparql(KG_FILE)
-    stats_html      = render_stats_html(kg_placeholders, sparql_stats)
+    #sparql_stats    = query_kg_sparql(KG_FILE)
+    #stats_html      = render_stats_html(kg_placeholders, sparql_stats)
 
     # Clean and recreate output directory
     if os.path.exists(OUTPUT_DIR):
@@ -468,7 +468,7 @@ def main():
 
         page_title   = meta.get("title", item["label"])
         content_html = md_lib.markdown(body, extensions=md_extensions)
-        content_html = content_html.replace("{{ stats_dashboard }}", stats_html)
+        # content_html = content_html.replace("{{ stats_dashboard }}", stats_html)
 
         current_slug = slug_from_filename(md_file)
         nav_html     = build_nav(nav_items, base_url, current_slug)
