@@ -20,10 +20,14 @@ Output: case-studies.ttl
 """
 
 import csv
+import logging
 import os
 import sys
 import time
+import warnings
 
+logging.getLogger("rdflib").setLevel(logging.ERROR)
+warnings.filterwarnings("ignore", category=UserWarning, module="rdflib")
 ROOT        = os.path.dirname(os.path.abspath(__file__))
 CSV_PATH    = os.path.join(ROOT, "content", "case-studies.csv")
 KG_PATH     = os.path.join(ROOT, "KG.ttl")
