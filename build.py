@@ -692,7 +692,7 @@ def main():
             print(f"  WARNING: {fname} not found, skipping.")
 
     md_extensions = ["tables", "fenced_code", "attr_list", "def_list"]
-
+    case_data = load_case_studies_ttl(CS_TTL_FILE)
     for item in nav_items:
         if "url" in item:
             print(f"  Skipped nav item '{item['label']}' (static URL: {item['url']})")
@@ -713,6 +713,20 @@ def main():
         # Apply KG placeholders before markdown rendering
         if md_file == "knowledge-graph.md":
             body = apply_kg_placeholders(body, kg_placeholders)
+        
+        # Generate case studies index table dynamically
+        if md_file == "case-studies.md" and case_data:
+            rows = "\n".join(
+                f"| {cs_id} | [{case['entity_label']} → {case['proxy_label']} → {case['target_label']}](case-study/cs-{cs_id}.html) |"
+                for cs_id, case in sorted(case_data.items())
+            )
+            body = re.sub(
+                r"\|.*?\n(\|[-| ]+\|\n)(\|.*?\n)*",
+                f"| # | Path |\n|---|------|\n{rows}\n",
+                body,
+                count=1,
+                flags=re.DOTALL
+            )
 
         page_title   = meta.get("title", item["label"])
         content_html = md_lib.markdown(body, extensions=md_extensions)
@@ -732,7 +746,6 @@ def main():
         print(f"  Built {md_file} → _site/{out_filename}")
 
     # ── Case study pages ──────────────────────────────────────────────────────
-    case_data = load_case_studies_ttl(CS_TTL_FILE)
 
     if case_data:
         os.makedirs(CS_OUTPUT_DIR, exist_ok=True)
