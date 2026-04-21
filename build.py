@@ -737,44 +737,25 @@ def main():
     if case_data:
         os.makedirs(CS_OUTPUT_DIR, exist_ok=True)
 
-        for md_file in sorted(os.listdir(CS_CONTENT_DIR)):
-            if not md_file.endswith(".md"):
-                continue
+    for cs_id in sorted(case_data.keys()):
+        case       = case_data[cs_id]
+        page_title = f"Case Study {cs_id}: {case['entity_label']} → {case['proxy_label']} → {case['target_label']}"
 
-            md_path = os.path.join(CS_CONTENT_DIR, md_file)
-            with open(md_path, encoding="utf-8") as f:
-                raw = f.read()
+        nav_html     = build_nav(nav_items, base_url, "case-studies")
+        content_html = render_case_study_page(case)
+        content_html = content_html.replace("{{ base_url }}", base_url)
 
-            meta, _ = parse_frontmatter(raw)
-            cs_id = meta.get("case_study_id")
-            if cs_id is None or cs_id not in case_data:
-                print(f"  WARNING: no case study data for {md_file} (id={cs_id}), skipping.")
-                continue
+        page_html = render_page(
+            template, content_html, page_title, nav_html, site_title, base_url
+        )
 
-            case       = case_data[cs_id]
-            page_title = meta.get("title", f"Case Study {cs_id}")
+        out_filename = f"cs-{cs_id}.html"
+        out_path     = os.path.join(CS_OUTPUT_DIR, out_filename)
+        with open(out_path, "w", encoding="utf-8") as f:
+            f.write(page_html)
 
-            # nav active slug — mark "Case Studies" as active for all sub-pages
-            nav_html     = build_nav(nav_items, base_url, "case-studies")
-            content_html = render_case_study_page(case)
-            content_html = content_html.replace("{{ base_url }}", base_url)
-
-            page_html = render_page(
-                template, content_html, page_title, nav_html, site_title, base_url
-            )
-            # Fix asset paths: case-study pages are one level deeper
-            page_html = page_html.replace(
-                f'href="{base_url}/static/',
-                f'href="{base_url}/static/'
-            )
-
-            out_filename = slug_from_filename(md_file) + ".html"
-            out_path     = os.path.join(CS_OUTPUT_DIR, out_filename)
-            with open(out_path, "w", encoding="utf-8") as f:
-                f.write(page_html)
-
-            print(f"  Built case-study/{md_file} → _site/case-study/{out_filename}")
-
+        print(f"  Built case-study/cs-{cs_id}.html")
+    
     print(f"\nDone. Site written to {OUTPUT_DIR}/")
 
 
