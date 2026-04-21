@@ -689,6 +689,7 @@ let lastResults = null;
 let currentTypePage = 1;
 let selectedType = null;
 let allTypeEntities = [];
+const typeLabels = new Map();
 
 // ══════════════════════════════════════════════════════════
 // SPARQL FETCH (QLever — standard Accept header, no vendor param)
@@ -737,7 +738,29 @@ function shortIRI(iri) {
 }
 
 function typeName(typeIRI) {
-  return typeIRI.replace('https://purl.net/climatesense/lack/type/', '').replace(/_/g, ' ');
+  if (typeIRI.startsWith('https://purl.net/climatesense/lack/type/'))
+    return typeIRI.replace('https://purl.net/climatesense/lack/type/', '').replace(/_/g, ' ');
+  return typeLabels.get(typeIRI) || shortIRI(typeIRI);
+}
+async function prefetchTypeLabels(iris) {
+  const unknown = iris.filter(iri =>
+    !typeLabels.has(iri) &&
+    !iri.startsWith('https://purl.net/climatesense/lack/type/')
+  );
+  if (!unknown.length) return;
+  const values = unknown.map(iri => `(<${iri}>)`).join(' ');
+  const r = await sparqlQuery(`PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?type ?label WHERE {
+  VALUES (?type) { ${values} }
+  OPTIONAL { ?type rdfs:label ?label }
+}`);
+  r.results.bindings.forEach(b => {
+    typeLabels.set(b.type.value, b.label?.value || shortIRI(b.type.value));
+  });
+  // cache any that returned no label at all
+  unknown.forEach(iri => {
+    if (!typeLabels.has(iri)) typeLabels.set(iri, shortIRI(iri));
+  });
 }
 
 function fmtNum(n) {
@@ -891,8 +914,8 @@ LIMIT 15`);
 
   const el = document.getElementById('chart-types');
   if (!r.results.bindings.length) { el.innerHTML = '<span class="empty">No data</span>'; return; }
-  const max = parseInt(r.results.bindings[0].count.value);
-  el.innerHTML = r.results.bindings.map(b => {
+  await prefetchTypeLabels(r.results.bindings.map(b => b.type.value));
+  const max = parseInt(r.results.bindings[0].count.value);  el.innerHTML = r.results.bindings.map(b => {
     const n = parseInt(b.count.value);
     const pct = Math.round(n / max * 100);
     const name = typeName(b.type.value);
@@ -1122,10 +1145,11 @@ LIMIT 100`);
     return;
   }
 
-  let html = `<p style="font-size:0.82rem;color:#888;margin-bottom:0.5rem">${bindings.length} result(s)</p>
-  <div style="overflow-x:auto"><table class="data-table">
-    <thead><tr><th>Label</th><th>Type</th></tr></thead><tbody>`;
-  bindings.forEach(b => {
+  await prefetchTypeLabels(bindings.map(b => b.typeIRI?.value).filter(Boolean));
+    let html = `<p style="font-size:0.82rem;color:#888;margin-bottom:0.5rem">${bindings.length} result(s)</p>
+    <div style="overflow-x:auto"><table class="data-table">
+      <thead><tr><th>Label</th><th>Type</th></tr></thead><tbody>`;
+    bindings.forEach(b => {
     const iri = b.entity.value;
     const label = b.label?.value || iri;
     const typeIRI = b.typeIRI?.value || '';
@@ -1207,6 +1231,10 @@ GROUP BY ?pred ?source
 ORDER BY ?pred ?sourceLabel
 LIMIT 200`);
 
+  const typeIRIs = rMeta.results.bindings
+      .filter(b => b.p.value === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type')
+      .map(b => b.o.value);
+    await prefetchTypeLabels(typeIRIs);
     let entityType = '', wdLink = '', sourceURL = '';
     rMeta.results.bindings.forEach(b => {
       const p = b.p.value;
