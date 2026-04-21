@@ -4,13 +4,11 @@
 Entity counts:
 
 count
-38584
+0
 
 Entity links breakdown:
 
 type,count,wikidata,dbpedia
-https://purl.net/climatesense/lack/ns#Person,16905,5499,5983
-https://purl.net/climatesense/lack/ns#Collective,21679,7634,7406
 
 Relation counts:
 
@@ -74,24 +72,21 @@ https://purl.net/climatesense/lack/ns#wasOrganisedBy,12
 Entity counts:
 
 count
-38584
+0
 
 Entity links breakdown:
 
 type,count,wikidata,dbpedia
-https://purl.net/climatesense/lack/ns#Person,16905,5499,5983
-https://purl.net/climatesense/lack/ns#Collective,21679,7634,7406
 
 Relation counts:
 
 count
-265914
+239193
 
 Relation breakdown:
 
 relation,count
 https://purl.net/climatesense/lack/ns#associatedWith,101098
-http://www.w3.org/2002/07/owl#sameAs,26721
 https://purl.net/climatesense/lack/ns#employedBy,17520
 https://purl.net/climatesense/lack/ns#hasEmployee,17520
 https://purl.net/climatesense/lack/ns#hasMember,15966
