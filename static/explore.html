@@ -1093,16 +1093,13 @@ async function entitySearch() {
   resultsEl.innerHTML = '<span class="spinner"></span> Searching…';
 
   const r = await sparqlQuery(`${PREFIXES}
-SELECT ?entity (MIN(?la) AS ?label) (MIN(?typeIRI) AS ?typeIRI)
-FROM <https://purl.net/climatesense/lack>	  
+SELECT ?entity (MIN(?la) AS ?label) (MIN(?typeIRIi) AS ?typeIRI)	  
 WHERE {
 	?s ql:contains-entity ?la ;
 	   ql:contains-word "${q.toLowerCase().replace(/"/g, '')}" .
   ?entity rdfs:label ?la .
-  OPTIONAL {
-    ?entity rdf:type ?typeIRI .
-    FILTER(STRSTARTS(STR(?typeIRI), "http://purl.net/climatesense/lack/type/"))
-  }
+  FILTER EXISTS { GRAPH <https://purl.net/climatesense/lack> {?entity ?p [] }}
+  ?entity rdf:type ?typeIRIi .
 }
 GROUP BY ?entity
 ORDER BY ?label
