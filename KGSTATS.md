@@ -15,7 +15,7 @@ https://purl.net/climatesense/lack/ns#Collective,17604,5369,5210
 Relation counts:
 
 count
-47450
+47782
 
 Relation breakdown:
 
@@ -29,6 +29,7 @@ https://purl.net/climatesense/lack/ns#associatedWith,3216
 https://purl.net/climatesense/lack/ns#sponsored,3171
 https://purl.net/climatesense/lack/ns#hasPartner,2515
 https://purl.net/climatesense/lack/ns#derivedFrom,1922
+http://www.w3.org/2002/07/owl#sameAs,332
 https://purl.net/climatesense/lack/ns#founded,73
 https://purl.net/climatesense/lack/ns#hasMember,42
 https://purl.net/climatesense/lack/ns#acquired,37
@@ -48,12 +49,13 @@ type,count,wikidata,dbpedia
 Relation counts:
 
 count
-125352
+229323
 
 Relation breakdown:
 
 relation,count
-https://purl.net/climatesense/lack/ns#associatedWith,71265
+https://purl.net/climatesense/lack/ns#associatedWith,88650
+http://www.w3.org/2002/07/owl#sameAs,86586
 https://purl.net/climatesense/lack/ns#hasMember,13427
 https://purl.net/climatesense/lack/ns#hasEmployee,10638
 https://purl.net/climatesense/lack/ns#hasContributor,6722
@@ -84,13 +86,13 @@ https://purl.net/climatesense/lack/ns#Collective,17604,5369,5210
 Relation counts:
 
 count
-189248
+293395
 
 Relation breakdown:
 
 relation,count
-https://purl.net/climatesense/lack/ns#associatedWith,73836
-http://www.w3.org/2002/07/owl#sameAs,17117
+http://www.w3.org/2002/07/owl#sameAs,103881
+https://purl.net/climatesense/lack/ns#associatedWith,91219
 https://purl.net/climatesense/lack/ns#hasMember,13456
 https://purl.net/climatesense/lack/ns#memberOf,13456
 https://purl.net/climatesense/lack/ns#employedBy,10638
