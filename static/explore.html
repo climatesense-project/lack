@@ -1295,6 +1295,9 @@ LIMIT 200`);
     let entityType = '', wdLink = '', sourceURL = '';
     rMeta.results.bindings.forEach(b => {
       const p = b.p.value;
+	  if (p === 'http://www.w3.org/2000/01/rdf-schema#label') {
+	      label = b.o.value;
+	  }
       if (p === 'http://www.w3.org/1999/02/22-rdf-syntax-ns#type' && b.o.value.includes('/type/')) {
         entityType = typeName(b.o.value);
       }
