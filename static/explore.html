@@ -828,8 +828,15 @@ function loadActiveTab() {
 
 function restoreTab() {
   const hash = window.location.hash.replace('#', '');
-  const btn = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
-  if (btn) btn.click();
+  if (hash.startsWith('entity=')) {
+    const iri = decodeURIComponent(hash.slice('entity='.length));
+    const label = iri.split('/').pop();
+    document.querySelector('.tab-btn[data-tab="entities"]').click();
+    openEntity(iri, label);
+  } else {
+    const btn = document.querySelector(`.tab-btn[data-tab="${hash}"]`);
+    if (btn) btn.click();
+  }
 }
 
 // ══════════════════════════════════════════════════════════
