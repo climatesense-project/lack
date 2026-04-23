@@ -28,7 +28,7 @@ LACK maps the networks of people and organisations that work to undermine climat
 | 90,145 | asserted relations (extracted) |
 | 229,323 | inferred relations (inverse properties + entailments) |
 | 2 | source corpora (Desmog, LobbyMap/InfluenceMap) |
-| v1.0 · 9 April 2026 | current version |
+| v1.0 · 23 April 2026 | current version |
 
 ---
 

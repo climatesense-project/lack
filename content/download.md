@@ -24,7 +24,7 @@ URI:     https://purl.net/climatesense/lack/ns#
 
 ## Knowledge Graph Data
 
-The LACK knowledge graph v1.0 (released 9 April 2026) is available for download. It contains 38,584 entities and 264,516 triples (65,992 asserted + 174,354 inferred).
+The LACK knowledge graph v1.0 (released 23 April 2026) is available for download.
 
 | File | Format | Description |
 |---|---|---|
