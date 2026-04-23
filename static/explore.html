@@ -290,7 +290,7 @@ code { font-family: monospace; background: #f7fbf7; padding: 0.1em 0.35em; borde
   <div class="tabs">
     <button class="tab-btn active" data-tab="stats">Statistics</button>
     <button class="tab-btn" data-tab="types">Browse by type</button>
-    <button class="tab-btn" data-tab="entities">Entity search</button>
+    <button class="tab-btn" data-tab="entities">Entity lookup</button>
     <button class="tab-btn" data-tab="sparql">SPARQL editor</button>
   </div>
 
@@ -365,7 +365,7 @@ code { font-family: monospace; background: #f7fbf7; padding: 0.1em 0.35em; borde
   ══════════════════════════════════════════ -->
   <div class="tab-panel" id="tab-entities">
     <div class="panel" id="entity-search-panel">
-      <h2>Entity search</h2>
+      <h2>Entity lookup</h2>
       <div class="search-row">
         <input type="text" class="search-input" id="entity-search-input" placeholder="Search by label…">
         <button class="btn-run" id="btn-entity-search">Search</button>
@@ -434,6 +434,7 @@ PREFIX owl:         <http://www.w3.org/2002/07/owl#>
 PREFIX rdf:         <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX rdfs:        <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd:         <http://www.w3.org/2001/XMLSchema#>
+PREFIX prov:        <http://www.w3.org/ns/prov#>
 `;
 
 const DEFAULT_ENDPOINT = 'https://sparql.climatesense.kmi.tools/climatesense';
@@ -734,7 +735,8 @@ function shortIRI(iri) {
     .replace('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf:')
     .replace('http://www.w3.org/2000/01/rdf-schema#', 'rdfs:')
     .replace('http://www.wikidata.org/entity/', 'wd:')
-    .replace('https://www.wikidata.org/entity/', 'wd:');
+    .replace('https://www.wikidata.org/entity/', 'wd:').
+    .replace('http://www.w3.org/ns/prov#', 'prov:');
 }
 
 function typeName(typeIRI) {
@@ -1257,18 +1259,16 @@ SELECT ?pred ?target (MIN(?targetLabell) AS ?targetLabel) (MIN(?srcc) AS ?src)
 FROM <https://purl.net/climatesense/lack>
 WHERE {
 	<${iri}> ?pred ?target .
-	FILTER(STRSTARTS(STR(?pred), STR(lack:)))
-	FILTER(STRSTARTS(STR(?target), STR(entity:)))
 	OPTIONAL { ?target rdfs:label ?targetLabell }
-	OPTIONAL { ?target rdfs:seeAlso ?srcc }
 	OPTIONAL {
-	  ?stmt rdf:type rdf:Statement ;
-	        rdf:subject [] ;
-	        rdf:predicate ?pred ;
-	        rdf:object ?target .
-	  OPTIONAL { ?stmt lack:since ?sincee }
-	  OPTIONAL { ?stmt lack:until ?untill }
-  }
+		  ?stmt rdf:type rdf:Statement ;
+		        prov:wasDerivedFrom ?srcc ;
+		        rdf:subject <${iri}> ;
+		        rdf:predicate ?pred ;
+		        rdf:object ?target .
+		  OPTIONAL { ?stmt lack:since ?sincee }
+		  OPTIONAL { ?stmt lack:until ?untill }
+	  }
 }
 GROUP BY ?pred ?target
 ORDER BY ?pred ?targetLabel
