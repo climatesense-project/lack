@@ -735,7 +735,7 @@ function shortIRI(iri) {
     .replace('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf:')
     .replace('http://www.w3.org/2000/01/rdf-schema#', 'rdfs:')
     .replace('http://www.wikidata.org/entity/', 'wd:')
-    .replace('https://www.wikidata.org/entity/', 'wd:').
+    .replace('https://www.wikidata.org/entity/', 'wd:')
     .replace('http://www.w3.org/ns/prov#', 'prov:');
 }
 
@@ -1279,10 +1279,16 @@ SELECT ?pred ?source (MIN(?sourceLabell) AS ?sourceLabel) (MIN(?srcc) AS ?src)
 FROM <https://purl.net/climatesense/lack>
 WHERE {
   ?source ?pred <${iri}> .
-  FILTER(STRSTARTS(STR(?pred), STR(lack:)))
-  FILTER(STRSTARTS(STR(?source), STR(entity:)))
   OPTIONAL { ?source rdfs:label ?sourceLabell }
-  OPTIONAL { ?source rdfs:seeAlso ?srcc }
+  OPTIONAL {
+	  ?stmt rdf:type rdf:Statement ;
+	        prov:wasDerivedFrom ?srcc ;
+	        rdf:object <${iri}> ;
+	        rdf:predicate ?pred ;
+	        rdf:subject ?source .
+	  OPTIONAL { ?stmt lack:since ?sincee }
+	  OPTIONAL { ?stmt lack:until ?untill }
+  }
 }
 GROUP BY ?pred ?source
 ORDER BY ?pred ?sourceLabel
