@@ -652,9 +652,8 @@ def render_case_study_page(case):
     return f"""
 {back_link}
 <h1>Case Study {case['id']}</h1>
-{disclaimer}
 {path_html}
-
+{disclaimer}
 <h2>Supporting evidence</h2>
 <h3>Hop 1: {case['entity_label']} &rarr; {case['proxy_label']} <span class="stmt-count">({n1} statement{'s' if n1 != 1 else ''})</span></h3>
 {hop1_table}
