@@ -639,9 +639,20 @@ def render_case_study_page(case):
 
     back_link = '<p><a href="../case-studies.html">&larr; All case studies</a></p>'
 
+    disclaimer = (
+        '<div class="disclaimer">'
+        '<strong>Disclaimer:</strong> The paths displayed in this interface represent '
+        'structural connections derived from publicly available data. The presence of a '
+        'connection between two entities does not imply wrongdoing, shared intent, or any '
+        'form of direct collaboration. These relationships reflect patterns in the data that '
+        'may warrant further investigation by qualified researchers or practitioners.'
+        '</div>'
+    )
+    
     return f"""
 {back_link}
 <h1>Case Study {case['id']}</h1>
+{disclaimer}
 {path_html}
 
 <h2>Supporting evidence</h2>
