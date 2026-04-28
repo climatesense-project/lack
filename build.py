@@ -75,7 +75,7 @@ def parse_kgstats(path):
     unlinked       = total_entities   - wikidata_total
 
     # ── sameAs / seeAlso ──────────────────────────────────────────────────────
-    sameas_rows  = _parse_csv_block(before, "relation,count")
+    sameas_rows  = _parse_csv_block_nth(before, "relation,count", n=2)
     sameas_map   = {r["relation"]: int(r["count"]) for r in sameas_rows}
     sameas_owl   = sameas_map.get("http://www.w3.org/2002/07/owl#sameAs", 0)
     sameas_rdfs  = sameas_map.get("http://www.w3.org/2000/01/rdf-schema#seeAlso", 0)
@@ -85,7 +85,7 @@ def parse_kgstats(path):
     # Use the dedicated "Relation breakdown" CSV block (relation,count header)
     # which appears after "Relation counts:" — distinct from the sameAs block
     # by targeting the second occurrence of the relation,count header.
-    rel_rows     = _parse_csv_block_nth(before, "relation,count", n=2)
+    rel_rows     = _parse_csv_block_nth(before, "relation,count", n=1)
     rel_map      = {r["relation"].split("#")[-1]: int(r["count"]) for r in rel_rows}
     asserted_total = sum(rel_map.values())
 
