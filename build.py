@@ -57,65 +57,116 @@ def parse_kgstats(path):
     inferred = _extract_section(text, "INFERRED")
     after    = _extract_section(text, "AFTER INFERENCING")
 
-    # Entity counts
+    # ── Entity counts ──────────────────────────────────────────────────────────
     total_entities  = _first_int(before, r"^(\d+)$")
     entity_links    = _parse_csv_block(before, "type,count,wikidata,dbpedia")
     persons_row     = _row_by_key(entity_links, "lack/ns#Person")
     collectives_row = _row_by_key(entity_links, "lack/ns#Collective")
 
-    total_persons      = int(persons_row["count"])      if persons_row     else 0
-    total_collectives  = int(collectives_row["count"])  if collectives_row else 0
-    wikidata_persons   = int(persons_row["wikidata"])   if persons_row     else 0
-    wikidata_collectives = int(collectives_row["wikidata"]) if collectives_row else 0
-    dbpedia_persons    = int(persons_row["dbpedia"])    if persons_row     else 0
-    dbpedia_collectives= int(collectives_row["dbpedia"])if collectives_row else 0
+    total_persons        = int(persons_row["count"])       if persons_row     else 0
+    total_collectives    = int(collectives_row["count"])   if collectives_row else 0
+    wikidata_persons     = int(persons_row["wikidata"])    if persons_row     else 0
+    wikidata_collectives = int(collectives_row["wikidata"])if collectives_row else 0
+    dbpedia_persons      = int(persons_row["dbpedia"])     if persons_row     else 0
+    dbpedia_collectives  = int(collectives_row["dbpedia"]) if collectives_row else 0
 
     wikidata_total = wikidata_persons + wikidata_collectives
     dbpedia_total  = dbpedia_persons  + dbpedia_collectives
     unlinked       = total_entities   - wikidata_total
 
-    # Relation counts
-    asserted_total = _first_int(before,   r"^(\d+)$", skip=1)
-    inferred_total = _first_int(inferred, r"^(\d+)$", skip=1)
-    after_total    = _first_int(after,    r"^(\d+)$", skip=1)
+    # ── sameAs / seeAlso ──────────────────────────────────────────────────────
+    sameas_rows  = _parse_csv_block(before, "relation,count")
+    sameas_map   = {r["relation"]: int(r["count"]) for r in sameas_rows}
+    sameas_owl   = sameas_map.get("http://www.w3.org/2002/07/owl#sameAs", 0)
+    sameas_rdfs  = sameas_map.get("http://www.w3.org/2000/01/rdf-schema#seeAlso", 0)
+    sameas_total = sameas_owl + sameas_rdfs
 
-    # Asserted relation breakdown
-    rel_rows = _parse_csv_block(before, "relation,count")
-    rel_map  = {r["relation"].split("#")[-1]: int(r["count"]) for r in rel_rows}
+    # ── Asserted relation counts ───────────────────────────────────────────────
+    # Use the dedicated "Relation breakdown" CSV block (relation,count header)
+    # which appears after "Relation counts:" — distinct from the sameAs block
+    # by targeting the second occurrence of the relation,count header.
+    rel_rows     = _parse_csv_block_nth(before, "relation,count", n=2)
+    rel_map      = {r["relation"].split("#")[-1]: int(r["count"]) for r in rel_rows}
+    asserted_total = sum(rel_map.values())
+
+    # ── Attributes ────────────────────────────────────────────────────────────
+    attr_rows    = _parse_csv_block_nth(before, "relation,count", n=3)
+    attr_map     = {r["relation"].split("#")[-1]: int(r["count"]) for r in attr_rows}
+    attr_total   = sum(attr_map.values())
+
+    # ── Statements ────────────────────────────────────────────────────────────
+    stmt_rows    = _parse_csv_block_nth(before, "relation,count", n=4)
+    stmt_map     = {}
+    for r in stmt_rows:
+        key = r["relation"].split("#")[-1]
+        # strip owl# prefix for sameAs
+        if "owl#" in r["relation"]:
+            key = "owl_" + key
+        stmt_map[key] = int(r["count"])
+    statements_total = _first_int_after(before, "Statements counts:", r"^(\d+)$")
+
+    # ── Inferred relation counts ───────────────────────────────────────────────
+    inf_rel_rows = _parse_csv_block(inferred, "relation,count")
+    inf_rel_map  = {r["relation"].split("#")[-1]: int(r["count"]) for r in inf_rel_rows}
+    inferred_total = sum(inf_rel_map.values())
+
+    # ── After inferencing total ────────────────────────────────────────────────
+    after_total  = _first_int_after(after, "Relation counts:", r"^(\d+)$")
 
     def pct(n, total):
         return f"{round(n / total * 100)}%" if total else "n/a"
 
     placeholders = {
+        # Entities
         "kg_total_entities":    f"{total_entities:,}",
         "kg_total_persons":     f"{total_persons:,}",
         "kg_total_collectives": f"{total_collectives:,}",
         "kg_wikidata_links":    f"{wikidata_total:,}",
         "kg_dbpedia_links":     f"{dbpedia_total:,}",
-        "kg_asserted":          f"{asserted_total:,}",
-        "kg_inferred":          f"{inferred_total:,}",
-        "kg_total":             f"{after_total:,}",
         "kg_wikidata_pct":      pct(wikidata_total, total_entities),
         "kg_dbpedia_pct":       pct(dbpedia_total,  total_entities),
         "kg_unlinked":          f"{unlinked:,}",
         "kg_unlinked_pct":      pct(unlinked, total_entities),
+        # sameAs / seeAlso
+        "kg_sameas_owl":        f"{sameas_owl:,}",
+        "kg_sameas_rdfs":       f"{sameas_rdfs:,}",
+        "kg_sameas_total":      f"{sameas_total:,}",
+        # Relations (asserted)
+        "kg_asserted":          f"{asserted_total:,}",
         "kg_asserted_inf":      f"{asserted_total:,}",
+        # Attributes
+        "kg_attr_activeSince":  f"{attr_map.get('activeSince', 0):,}",
+        "kg_attr_activeUntil":  f"{attr_map.get('activeUntil', 0):,}",
+        "kg_attr_total":        f"{attr_total:,}",
+        # Statements
+        "kg_statements_total":  f"{statements_total:,}",
+        # Inferred / totals
+        "kg_inferred":          f"{inferred_total:,}",
         "kg_inferred_inf":      f"{inferred_total:,}",
+        "kg_total":             f"{after_total:,}",
         "kg_total_inf":         f"{after_total:,}",
+        # Asserted relation breakdown
         **{f"kg_rel_{k}": f"{v:,}" for k, v in rel_map.items()},
+        # Attributes breakdown
+        **{f"kg_attr_{k}": f"{v:,}" for k, v in attr_map.items()},
+        # Statements breakdown
+        **{f"kg_stmt_{k}": f"{v:,}" for k, v in stmt_map.items()},
+        # Inferred relation breakdown
+        **{f"kg_inf_rel_{k}": f"{v:,}" for k, v in inf_rel_map.items()},
     }
 
-    # Store raw numbers for dashboard rendering
-    placeholders["_total_entities"]  = total_entities
-    placeholders["_total_persons"]   = total_persons
+    # Raw numbers for dashboard rendering
+    placeholders["_total_entities"]   = total_entities
+    placeholders["_total_persons"]    = total_persons
     placeholders["_total_collectives"]= total_collectives
-    placeholders["_asserted_total"]  = asserted_total
-    placeholders["_after_total"]     = after_total
-    placeholders["_wikidata_total"]  = wikidata_total
-    placeholders["_rel_map"]         = rel_map
+    placeholders["_asserted_total"]   = asserted_total
+    placeholders["_after_total"]      = after_total
+    placeholders["_wikidata_total"]   = wikidata_total
+    placeholders["_rel_map"]          = rel_map
 
     print(f"    Entities: {total_entities:,}  Asserted: {asserted_total:,}  "
-          f"Inferred: {inferred_total:,}  Total: {after_total:,}")
+          f"Inferred: {inferred_total:,}  Total: {after_total:,}  "
+          f"Statements: {statements_total:,}")
     return placeholders
 
 
@@ -152,6 +203,38 @@ def _parse_csv_block(text, header):
                 rows.append(dict(zip(keys, parts)))
     return rows
 
+
+def _parse_csv_block_nth(text, header, n=1):
+    """Return the Nth occurrence (1-based) of a CSV block with the given header."""
+    lines = text.splitlines()
+    rows, occurrence, in_block, keys = [], 0, False, []
+    for line in lines:
+        line = line.strip()
+        if line == header:
+            occurrence += 1
+            if occurrence == n:
+                keys, in_block = header.split(","), True
+            continue
+        if in_block:
+            if not line or line.startswith("#"):
+                break
+            parts = line.split(",")
+            if len(parts) == len(keys):
+                rows.append(dict(zip(keys, parts)))
+    return rows
+
+
+def _first_int_after(text, marker, pattern):
+    """Return the first integer matching pattern in the text after marker."""
+    idx = text.find(marker)
+    if idx == -1:
+        return 0
+    segment = text[idx:]
+    m = re.search(pattern, segment, re.MULTILINE)
+    try:
+        return int(m.group(1))
+    except (AttributeError, ValueError):
+        return 0
 
 def _row_by_key(rows, key_fragment):
     for row in rows:
