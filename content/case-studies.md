@@ -8,7 +8,7 @@ title: Case Studies
 The following case studies illustrate connections that emerge from LACK's integration of multiple independent sources. Each case involves two statements drawn from different websites — no single source contains the full picture — whose combination reveals a relationship between entities that neither source makes explicit on its own.
 
 <div class="disclaimer">
-  <strong>Disclaimer:</strong> The paths displayed in this interface represent structural connections derived from publicly available data. The presence of a connection between two entities does not imply wrongdoing, shared intent, or any form of direct collaboration. These relationships reflect patterns in the data that may warrant further investigation by qualified researchers or practitioners.
+  <strong>Disclaimer:</strong> The connections revealed are structural, derived from publicly available data; they do not imply wrongdoing, shared intent, or direct collaboration, and should be treated as research leads rather than evidential claims. 
 </div>
 
 | # | Path | Angle |
