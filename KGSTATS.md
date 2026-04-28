@@ -4,7 +4,7 @@
 Entity counts:
 
 count
-27974
+27945
 
 Entity links breakdown:
 
@@ -77,7 +77,7 @@ https://purl.net/climatesense/lack/ns#wasOrganisedBy,13
 Entity counts:
 
 count
-27974
+27945
 
 Entity links breakdown:
 
