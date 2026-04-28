@@ -3,7 +3,12 @@
 @prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
-
+@prefix dc:   <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix voaf: <http://purl.org/vocommons/voaf#> .
+@prefix cc:   <http://creativecommons.org/ns#> .
+@prefix vs:   <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
 # ---------------------------------------------------------------
 # Ontology declaration
 # ---------------------------------------------------------------
@@ -11,8 +16,27 @@
 <https://purl.net/climatesense/lack/ns#>
     a owl:Ontology ;
     rdfs:label "LACK Ontology"@en ;
-    rdfs:comment "Lobbying Against Climate science Knowledge — a lightweight ontology for describing relationships between people and organisations relevant to lobbying against climate change awareness and policies."@en .
+    rdfs:comment "Lobbying Against Climate science Knowledge — a lightweight ontology for describing relationships between people and organisations relevant to lobbying against climate change awareness and policies."@en ;
+    a voaf:Vocabulary ;
+    vann:preferredNamespacePrefix "lack" ;
+    vann:preferredNamespaceUri    "https://purl.net/climatesense/lack/ns#" ;
+    dc:title                      "LACK Ontology"@en ;
+    dc:description                "Lobbying Against Climate science Knowledge — a lightweight ontology for describing relationships between people and organisations relevant to lobbying against climate change awareness and policies."@en ;
+    dc:issued                     "2026-04-26"^^xsd:date ;
+    dc:modified                   "2026-04-28"^^xsd:date ;
+    owl:versionInfo               "1.0" ;
+    dc:creator                    <https://orcid.org/0000-0002-3184-5407> ;
+    dc:publisher                  <https://climatesense-project.eu/> ;
+    dc:rights                     "Copyright © 2026 Climate Sense Project"@en ;
+    cc:license                    <https://creativecommons.org/licenses/by/4.0/> .
 
+<https://orcid.org/0000-0002-3184-5407>
+    a foaf:Person ;
+    foaf:name "Enrico Daga" .
+
+<https://climatesense-project.eu/>
+    a foaf:Organization ;
+    foaf:name "Climate Sense Project" .
 # ---------------------------------------------------------------
 # Classes
 # ---------------------------------------------------------------
@@ -324,3 +348,116 @@ lack:until
     rdfs:comment "The end year of a reified relation. Applied to an rdf:Statement instance. When the source annotation is 'when', set to the same value as lack:since."@en ;
     rdfs:domain rdf:Statement ;
     rdfs:range  xsd:gYear .
+
+### STATUS
+lack:Person
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:Collective
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:associatedWith
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:memberOf
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:hasMember
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:employedBy
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:hasEmployee
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:leadsAt
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:hasLeader
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:fundedBy
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:hasFunder
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:founded
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:wasFoundedBy
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:contributedTo
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:hasContributor
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:hasPartner
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:sponsored
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:wasSponsoredBy
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:acquired
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:wasAcquiredBy
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:derivedFrom
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:hasDerivation
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:organised
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:wasOrganisedBy
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:activeSince
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:activeUntil
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:since
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .
+
+lack:until
+    rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#> ;
+    vs:term_status   "stable" .

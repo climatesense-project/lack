@@ -1,423 +1,661 @@
+Prefix: cc: <http://creativecommons.org/ns#>
+Prefix: dc: <http://purl.org/dc/terms/>
+Prefix: foaf: <http://xmlns.com/foaf/0.1/>
 Prefix: lack: <https://purl.net/climatesense/lack/ns#>
-Prefix: owl:  <http://www.w3.org/2002/07/owl#>
-Prefix: rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+Prefix: owl: <http://www.w3.org/2002/07/owl#>
+Prefix: rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-Prefix: xsd:  <http://www.w3.org/2001/XMLSchema#>
+Prefix: vann: <http://purl.org/vocab/vann/>
+Prefix: voaf: <http://purl.org/vocommons/voaf#>
+Prefix: vs: <http://www.w3.org/2003/06/sw-vocab-status/ns#>
+Prefix: xml: <http://www.w3.org/XML/1998/namespace>
+Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>
+Prefix: : <https://purl.net/climatesense/lack/ns#>
+
+
 
 Ontology: <https://purl.net/climatesense/lack/ns#>
-    Annotations:
-        rdfs:label "LACK Ontology"@en,
-        rdfs:comment "Lobbying Against Climate science Knowledge — a lightweight ontology for describing relationships between people and organisations relevant to lobbying against climate change awareness and policies."@en
 
 
-# ---------------------------------------------------------------
-# Classes
-# ---------------------------------------------------------------
+Annotations: 
+    cc:license <https://creativecommons.org/licenses/by/4.0/>,
+    dc:creator <https://orcid.org/0000-0002-3184-5407>,
+    dc:description "Lobbying Against Climate science Knowledge — a lightweight ontology for describing relationships between people and organisations relevant to lobbying against climate change awareness and policies."@en,
+    dc:issued "2026-04-26"^^xsd:date,
+    dc:modified "2026-04-28"^^xsd:date,
+    dc:publisher <https://climatesense-project.eu/>,
+    dc:rights "Copyright © 2026 Climate Sense Project"@en,
+    dc:title "LACK Ontology"@en,
+    vann:preferredNamespacePrefix "lack",
+    vann:preferredNamespaceUri "https://purl.net/climatesense/lack/ns#",
+    rdfs:comment "Lobbying Against Climate science Knowledge — a lightweight ontology for describing relationships between people and organisations relevant to lobbying against climate change awareness and policies."@en,
+    rdfs:label "LACK Ontology"@en,
+    owl:versionInfo "1.0"
 
-Class: lack:Person
-    Annotations:
-        rdfs:label "Person"@en,
-        rdfs:comment "An individual human being."@en
+AnnotationProperty: cc:license
 
-Class: lack:Collective
-    Annotations:
-        rdfs:label "Collective"@en,
-        rdfs:comment "Any group of people organised around a shared purpose. Includes companies, NGOs, think tanks, news agencies, political assemblies, events, committees, and networks."@en
+    
+AnnotationProperty: dc:creator
 
+    
+AnnotationProperty: dc:description
 
-# ---------------------------------------------------------------
-# Top-level relation
-# ---------------------------------------------------------------
+    
+AnnotationProperty: dc:issued
 
-ObjectProperty: lack:associatedWith
-    Annotations:
-        rdfs:label "associated with"@en,
-        rdfs:comment "General-purpose association or affiliation. Top-level relation from which most other relations in this ontology are derived."@en
-    Characteristics:
-        Symmetric
-    Domain:
-        lack:Person or lack:Collective
-    Range:
-        lack:Person or lack:Collective
+    
+AnnotationProperty: dc:modified
 
+    
+AnnotationProperty: dc:publisher
 
-# ---------------------------------------------------------------
-# Membership
-# ---------------------------------------------------------------
+    
+AnnotationProperty: dc:rights
 
-ObjectProperty: lack:memberOf
-    Annotations:
-        rdfs:label "member of"@en,
-        rdfs:comment "Indicates that a person is a member of a collective."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:hasMember
-    Domain:
-        lack:Person
-    Range:
-        lack:Collective
+    
+AnnotationProperty: dc:title
 
-ObjectProperty: lack:hasMember
-    Annotations:
-        rdfs:label "has member"@en,
-        rdfs:comment "Indicates that a collective has a person as a member."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:memberOf
-    Domain:
-        lack:Collective
-    Range:
-        lack:Person
+    
+AnnotationProperty: foaf:name
 
+    
+AnnotationProperty: owl:versionInfo
 
-# ---------------------------------------------------------------
-# Employment
-# ---------------------------------------------------------------
+    
+AnnotationProperty: rdfs:comment
 
-ObjectProperty: lack:employedBy
-    Annotations:
-        rdfs:label "employed by"@en,
-        rdfs:comment "Indicates that a person is employed by a collective."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:hasEmployee
-    Domain:
-        lack:Person
-    Range:
-        lack:Collective
+    
+AnnotationProperty: rdfs:isDefinedBy
 
-ObjectProperty: lack:hasEmployee
-    Annotations:
-        rdfs:label "has employee"@en,
-        rdfs:comment "Indicates that a collective employs a person."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:employedBy
-    Domain:
-        lack:Collective
-    Range:
-        lack:Person
+    
+AnnotationProperty: rdfs:label
 
+    
+AnnotationProperty: vann:preferredNamespacePrefix
 
-# ---------------------------------------------------------------
-# Leadership
-# ---------------------------------------------------------------
+    
+AnnotationProperty: vann:preferredNamespaceUri
 
-ObjectProperty: lack:leadsAt
-    Annotations:
-        rdfs:label "leads at"@en,
-        rdfs:comment "Indicates that a person holds a named leadership or responsibility role within an organisation or department. Covers CEO, president, chair, director, VP, treasurer, secretary, COO, and department-level director roles."@en
-    SubPropertyOf:
-        lack:employedBy
-    InverseOf:
-        lack:hasLeader
-    Domain:
-        lack:Person
-    Range:
-        lack:Collective
+    
+AnnotationProperty: vs:term_status
 
-ObjectProperty: lack:hasLeader
-    Annotations:
-        rdfs:label "has leader"@en,
-        rdfs:comment "Indicates that a collective has a person in a leadership or responsibility role."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:leadsAt
-    Domain:
-        lack:Collective
-    Range:
-        lack:Person
+    
+Datatype: rdf:PlainLiteral
 
+    
+Datatype: xsd:date
 
-# ---------------------------------------------------------------
-# Funding
-# ---------------------------------------------------------------
+    
+Datatype: xsd:gYear
 
-ObjectProperty: lack:fundedBy
-    Annotations:
-        rdfs:label "funded by"@en,
-        rdfs:comment "Indicates that an entity is funded by another. Covers funding, donation, commissioning, and award receipt."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:hasFunder
-    Domain:
-        lack:Person or lack:Collective
-    Range:
-        lack:Person or lack:Collective
+    
+Datatype: xsd:string
 
-ObjectProperty: lack:hasFunder
-    Annotations:
-        rdfs:label "has funder"@en,
-        rdfs:comment "Indicates that an entity funds another."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:fundedBy
-    Domain:
-        lack:Person or lack:Collective
-    Range:
-        lack:Person or lack:Collective
-
-
-# ---------------------------------------------------------------
-# Founding & Creation
-# ---------------------------------------------------------------
-
-ObjectProperty: lack:founded
-    Annotations:
-        rdfs:label "founded"@en,
-        rdfs:comment "Indicates that a person or collective founded another collective. Covers founding, co-founding, creation, incorporation, and launch."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:wasFoundedBy
-    Domain:
-        lack:Person or lack:Collective
-    Range:
-        lack:Collective
-
-ObjectProperty: lack:wasFoundedBy
-    Annotations:
-        rdfs:label "was founded by"@en,
-        rdfs:comment "Indicates that a collective was founded by a person or another collective."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:founded
-    Domain:
-        lack:Collective
-    Range:
-        lack:Person or lack:Collective
-
-
-# ---------------------------------------------------------------
-# Contribution
-# ---------------------------------------------------------------
-
-ObjectProperty: lack:contributedTo
-    Annotations:
-        rdfs:label "contributed to"@en,
-        rdfs:comment "Indicates that a person or collective contributed to a collective. Covers contribution, authorship, distribution, presentation, and reposting."@en
-    InverseOf:
-        lack:hasContributor
-    Domain:
-        lack:Person or lack:Collective
-    Range:
-        lack:Collective
-
-ObjectProperty: lack:hasContributor
-    Annotations:
-        rdfs:label "has contributor"@en,
-        rdfs:comment "Indicates that a collective has a person or collective as a contributor."@en
-    InverseOf:
-        lack:contributedTo
-    Domain:
-        lack:Collective
-    Range:
-        lack:Person or lack:Collective
-
-
-# ---------------------------------------------------------------
-# Partnership
-# ---------------------------------------------------------------
-
-ObjectProperty: lack:hasPartner
-    Annotations:
-        rdfs:label "has partner"@en,
-        rdfs:comment "Indicates an organisational partnership between two collectives."@en
-    SubPropertyOf:
-        lack:associatedWith
-    Characteristics:
-        Symmetric
-    Domain:
-        lack:Collective
-    Range:
-        lack:Collective
-
-
-# ---------------------------------------------------------------
-# Sponsorship
-# ---------------------------------------------------------------
-
-ObjectProperty: lack:sponsored
-    Annotations:
-        rdfs:label "sponsored"@en,
-        rdfs:comment "Indicates that an entity sponsored another. Covers sponsorship, promotion, patronage, and support."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:wasSponsoredBy
-    Domain:
-        lack:Person or lack:Collective
-    Range:
-        lack:Person or lack:Collective
-
-ObjectProperty: lack:wasSponsoredBy
-    Annotations:
-        rdfs:label "was sponsored by"@en,
-        rdfs:comment "Indicates that an entity was sponsored by another."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:sponsored
-    Domain:
-        lack:Person or lack:Collective
-    Range:
-        lack:Person or lack:Collective
-
-
-# ---------------------------------------------------------------
-# Ownership & Acquisition
-# ---------------------------------------------------------------
-
+    
 ObjectProperty: lack:acquired
-    Annotations:
+
+    Annotations: 
+        rdfs:comment "Indicates that a collective acquired another. Covers acquisition, ownership, controlling interest, and shareholding."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
         rdfs:label "acquired"@en,
-        rdfs:comment "Indicates that a collective acquired another. Covers acquisition, ownership, controlling interest, and shareholding."@en
-    SubPropertyOf:
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
         lack:associatedWith
-    InverseOf:
+    
+    Domain: 
+        lack:Collective
+    
+    Range: 
+        lack:Collective
+    
+    InverseOf: 
         lack:wasAcquiredBy
-    Domain:
-        lack:Collective
-    Range:
-        lack:Collective
+    
+    
+ObjectProperty: lack:associatedWith
 
-ObjectProperty: lack:wasAcquiredBy
-    Annotations:
-        rdfs:label "was acquired by"@en,
-        rdfs:comment "Indicates that a collective was acquired by another."@en
-    SubPropertyOf:
-        lack:associatedWith
-    InverseOf:
-        lack:acquired
-    Domain:
+    Annotations: 
+        rdfs:comment "General-purpose association or affiliation. Top-level relation from which most other relations in this ontology are derived."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "associated with"@en,
+        vs:term_status "stable"
+    
+    Characteristics: 
+        Symmetric
+    
+    Domain: 
+        lack:Collective or lack:Person
+    
+    Range: 
+        lack:Collective or lack:Person
+    
+    
+ObjectProperty: lack:contributedTo
+
+    Annotations: 
+        rdfs:comment "Indicates that a person or collective contributed to a collective. Covers contribution, authorship, distribution, presentation, and reposting."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "contributed to"@en,
+        vs:term_status "stable"
+    
+    Domain: 
+        lack:Collective or lack:Person
+    
+    Range: 
         lack:Collective
-    Range:
-        lack:Collective
-
-
-# ---------------------------------------------------------------
-# Derivation
-# ---------------------------------------------------------------
-
+    
+    InverseOf: 
+        lack:hasContributor
+    
+    
 ObjectProperty: lack:derivedFrom
-    Annotations:
+
+    Annotations: 
+        rdfs:comment "Indicates that a collective is derived from another."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
         rdfs:label "derived from"@en,
-        rdfs:comment "Indicates that a collective is derived from another."@en
-    SubPropertyOf:
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
         lack:associatedWith
-    InverseOf:
+    
+    Domain: 
+        lack:Collective
+    
+    Range: 
+        lack:Collective
+    
+    InverseOf: 
         lack:hasDerivation
-    Domain:
-        lack:Collective
-    Range:
-        lack:Collective
+    
+    
+ObjectProperty: lack:employedBy
 
+    Annotations: 
+        rdfs:comment "Indicates that a person is employed by a collective."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "employed by"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
+        lack:Person
+    
+    Range: 
+        lack:Collective
+    
+    InverseOf: 
+        lack:hasEmployee
+    
+    
+ObjectProperty: lack:founded
+
+    Annotations: 
+        rdfs:comment "Indicates that a person or collective founded another collective. Covers founding, co-founding, creation, incorporation, and launch."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "founded"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
+        lack:Collective or lack:Person
+    
+    Range: 
+        lack:Collective
+    
+    InverseOf: 
+        lack:wasFoundedBy
+    
+    
+ObjectProperty: lack:fundedBy
+
+    Annotations: 
+        rdfs:comment "Indicates that an entity is funded by another. Covers funding, donation, commissioning, and award receipt."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "funded by"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
+        lack:Collective or lack:Person
+    
+    Range: 
+        lack:Collective or lack:Person
+    
+    InverseOf: 
+        lack:hasFunder
+    
+    
+ObjectProperty: lack:hasContributor
+
+    Annotations: 
+        rdfs:comment "Indicates that a collective has a person or collective as a contributor."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "has contributor"@en,
+        vs:term_status "stable"
+    
+    Domain: 
+        lack:Collective
+    
+    Range: 
+        lack:Collective or lack:Person
+    
+    InverseOf: 
+        lack:contributedTo
+    
+    
 ObjectProperty: lack:hasDerivation
-    Annotations:
+
+    Annotations: 
+        rdfs:comment "Indicates that a collective has another collective derived from it."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
         rdfs:label "has derivation"@en,
-        rdfs:comment "Indicates that a collective has another collective derived from it."@en
-    SubPropertyOf:
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
         lack:associatedWith
-    InverseOf:
+    
+    Domain: 
+        lack:Collective
+    
+    Range: 
+        lack:Collective
+    
+    InverseOf: 
         lack:derivedFrom
-    Domain:
+    
+    
+ObjectProperty: lack:hasEmployee
+
+    Annotations: 
+        rdfs:comment "Indicates that a collective employs a person."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "has employee"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
         lack:Collective
-    Range:
+    
+    Range: 
+        lack:Person
+    
+    InverseOf: 
+        lack:employedBy
+    
+    
+ObjectProperty: lack:hasFunder
+
+    Annotations: 
+        rdfs:comment "Indicates that an entity funds another."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "has funder"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
+        lack:Collective or lack:Person
+    
+    Range: 
+        lack:Collective or lack:Person
+    
+    InverseOf: 
+        lack:fundedBy
+    
+    
+ObjectProperty: lack:hasLeader
+
+    Annotations: 
+        rdfs:comment "Indicates that a collective has a person in a leadership or responsibility role."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "has leader"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
         lack:Collective
+    
+    Range: 
+        lack:Person
+    
+    InverseOf: 
+        lack:leadsAt
+    
+    
+ObjectProperty: lack:hasMember
 
+    Annotations: 
+        rdfs:comment "Indicates that a collective has a person as a member."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "has member"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
+        lack:Collective
+    
+    Range: 
+        lack:Person
+    
+    InverseOf: 
+        lack:memberOf
+    
+    
+ObjectProperty: lack:hasPartner
 
-# ---------------------------------------------------------------
-# Event Organisation
-# ---------------------------------------------------------------
+    Annotations: 
+        rdfs:comment "Indicates an organisational partnership between two collectives."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "has partner"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Characteristics: 
+        Symmetric
+    
+    Domain: 
+        lack:Collective
+    
+    Range: 
+        lack:Collective
+    
+    
+ObjectProperty: lack:leadsAt
 
+    Annotations: 
+        rdfs:comment "Indicates that a person holds a named leadership or responsibility role within an organisation or department. Covers CEO, president, chair, director, VP, treasurer, secretary, COO, and department-level director roles."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "leads at"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:employedBy
+    
+    Domain: 
+        lack:Person
+    
+    Range: 
+        lack:Collective
+    
+    InverseOf: 
+        lack:hasLeader
+    
+    
+ObjectProperty: lack:memberOf
+
+    Annotations: 
+        rdfs:comment "Indicates that a person is a member of a collective."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "member of"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
+        lack:Person
+    
+    Range: 
+        lack:Collective
+    
+    InverseOf: 
+        lack:hasMember
+    
+    
 ObjectProperty: lack:organised
-    Annotations:
+
+    Annotations: 
+        rdfs:comment "Indicates that a person or collective organised an event or collective."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
         rdfs:label "organised"@en,
-        rdfs:comment "Indicates that a person or collective organised an event or collective."@en
-    SubPropertyOf:
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
         lack:associatedWith
-    InverseOf:
+    
+    Domain: 
+        lack:Collective or lack:Person
+    
+    Range: 
+        lack:Collective
+    
+    InverseOf: 
         lack:wasOrganisedBy
-    Domain:
-        lack:Person or lack:Collective
-    Range:
-        lack:Collective
+    
+    
+ObjectProperty: lack:sponsored
 
-ObjectProperty: lack:wasOrganisedBy
-    Annotations:
-        rdfs:label "was organised by"@en,
-        rdfs:comment "Indicates that a collective was organised by a person or another collective."@en
-    SubPropertyOf:
+    Annotations: 
+        rdfs:comment "Indicates that an entity sponsored another. Covers sponsorship, promotion, patronage, and support."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "sponsored"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
         lack:associatedWith
-    InverseOf:
-        lack:organised
-    Domain:
+    
+    Domain: 
+        lack:Collective or lack:Person
+    
+    Range: 
+        lack:Collective or lack:Person
+    
+    InverseOf: 
+        lack:wasSponsoredBy
+    
+    
+ObjectProperty: lack:wasAcquiredBy
+
+    Annotations: 
+        rdfs:comment "Indicates that a collective was acquired by another."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "was acquired by"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
         lack:Collective
-    Range:
-        lack:Person or lack:Collective
+    
+    Range: 
+        lack:Collective
+    
+    InverseOf: 
+        lack:acquired
+    
+    
+ObjectProperty: lack:wasFoundedBy
 
+    Annotations: 
+        rdfs:comment "Indicates that a collective was founded by a person or another collective."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "was founded by"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
+        lack:Collective
+    
+    Range: 
+        lack:Collective or lack:Person
+    
+    InverseOf: 
+        lack:founded
+    
+    
+ObjectProperty: lack:wasOrganisedBy
 
-# ---------------------------------------------------------------
-# Temporal Activity — entity-level (datatype properties)
-# ---------------------------------------------------------------
+    Annotations: 
+        rdfs:comment "Indicates that a collective was organised by a person or another collective."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "was organised by"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
+        lack:Collective
+    
+    Range: 
+        lack:Collective or lack:Person
+    
+    InverseOf: 
+        lack:organised
+    
+    
+ObjectProperty: lack:wasSponsoredBy
 
+    Annotations: 
+        rdfs:comment "Indicates that an entity was sponsored by another."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "was sponsored by"@en,
+        vs:term_status "stable"
+    
+    SubPropertyOf: 
+        lack:associatedWith
+    
+    Domain: 
+        lack:Collective or lack:Person
+    
+    Range: 
+        lack:Collective or lack:Person
+    
+    InverseOf: 
+        lack:sponsored
+    
+    
 DataProperty: lack:activeSince
-    Annotations:
+
+    Annotations: 
+        rdfs:comment "The year from which a person or collective has been active."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
         rdfs:label "active since"@en,
-        rdfs:comment "The year from which a person or collective has been active."@en
-    Domain:
-        lack:Person or lack:Collective
-    Range:
+        vs:term_status "stable"
+    
+    Domain: 
+        lack:Collective or lack:Person
+    
+    Range: 
         xsd:gYear
-
+    
+    
 DataProperty: lack:activeUntil
-    Annotations:
+
+    Annotations: 
+        rdfs:comment "The year until which a person or collective was active."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
         rdfs:label "active until"@en,
-        rdfs:comment "The year until which a person or collective was active."@en
-    Domain:
-        lack:Person or lack:Collective
-    Range:
+        vs:term_status "stable"
+    
+    Domain: 
+        lack:Collective or lack:Person
+    
+    Range: 
         xsd:gYear
-
-
-# ---------------------------------------------------------------
-# Temporal annotation — reification-level (datatype properties)
-#
-# Used to annotate rdf:Statement instances produced by reifying
-# any lack: object property triple that carries temporal metadata.
-#
-# Convention:
-#   lack:since  — start year of the relation
-#   lack:until  — end year of the relation
-#   when        — point in time: set both lack:since and lack:until
-#                 to the same year value
-#
-# The base triple is always asserted directly alongside the
-# reified statement.
-# ---------------------------------------------------------------
-
+    
+    
 DataProperty: lack:since
-    Annotations:
-        rdfs:label "since"@en,
-        rdfs:comment "The start year of a reified relation. Applied to an rdf:Statement instance."@en
-    Domain:
-        rdf:Statement
-    Range:
-        xsd:gYear
 
-DataProperty: lack:until
-    Annotations:
-        rdfs:label "until"@en,
-        rdfs:comment "The end year of a reified relation. Applied to an rdf:Statement instance. When the source annotation is 'when', set to the same value as lack:since."@en
-    Domain:
+    Annotations: 
+        rdfs:comment "The start year of a reified relation. Applied to an rdf:Statement instance."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "since"@en,
+        vs:term_status "stable"
+    
+    Domain: 
         rdf:Statement
-    Range:
+    
+    Range: 
         xsd:gYear
+    
+    
+DataProperty: lack:until
+
+    Annotations: 
+        rdfs:comment "The end year of a reified relation. Applied to an rdf:Statement instance. When the source annotation is 'when', set to the same value as lack:since."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "until"@en,
+        vs:term_status "stable"
+    
+    Domain: 
+        rdf:Statement
+    
+    Range: 
+        xsd:gYear
+    
+    
+Class: foaf:Organization
+
+    
+Class: foaf:Person
+
+    
+Class: lack:Collective
+
+    Annotations: 
+        rdfs:comment "Any group of people organised around a shared purpose. Includes companies, NGOs, think tanks, news agencies, political assemblies, events, committees, and networks."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "Collective"@en,
+        vs:term_status "stable"
+    
+    
+Class: lack:Person
+
+    Annotations: 
+        rdfs:comment "An individual human being."@en,
+        rdfs:isDefinedBy <https://purl.net/climatesense/lack/ns#>,
+        rdfs:label "Person"@en,
+        vs:term_status "stable"
+    
+    
+Class: rdf:Statement
+
+    
+Class: voaf:Vocabulary
+
+    
+Individual: <https://climatesense-project.eu/>
+
+    Annotations: 
+        foaf:name "Climate Sense Project"
+    
+    Types: 
+        foaf:Organization
+    
+    
+Individual: <https://orcid.org/0000-0002-3184-5407>
+
+    Annotations: 
+        foaf:name "Enrico Daga"
+    
+    Types: 
+        foaf:Person
+    
+    
+Individual: lack:
+
+    Types: 
+        voaf:Vocabulary
+    
+    
