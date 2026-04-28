@@ -1,0 +1,107 @@
+@prefix void:  <http://rdfs.org/ns/void#> .
+@prefix dcat:  <http://www.w3.org/ns/dcat#> .
+@prefix dc:    <http://purl.org/dc/terms/> .
+@prefix foaf:  <http://xmlns.com/foaf/0.1/> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix cc:    <http://creativecommons.org/ns#> .
+@prefix sd:    <http://www.w3.org/ns/sparql-service-description#> .
+
+# ---------------------------------------------------------------
+# Dataset
+# ---------------------------------------------------------------
+
+<https://purl.net/climatesense/lack/dataset/kg>
+    a void:Dataset , dcat:Dataset ;
+    dc:title                "LACK Knowledge Graph"@en ;
+    dc:description          "A knowledge graph describing relationships between people and organisations relevant to lobbying against climate change awareness and policies. Built using the LACK ontology and derived from a large corpus of real-world relation expressions."@en ;
+    dc:issued               "2026-04-26"^^xsd:date ;
+    dc:modified             "2026-04-28"^^xsd:date ;
+    dc:creator              <https://orcid.org/0000-0002-3184-5407> ;
+    dc:publisher            <https://climatesense-project.eu/> ;
+    dc:rights               "Copyright © 2026 Climate Sense Project"@en ;
+    cc:license              <https://creativecommons.org/licenses/by/4.0/> ;
+    void:vocabulary         <https://purl.net/climatesense/lack/ns#> ;
+    void:uriSpace           "https://purl.net/climatesense/lack/"^^xsd:anyURI ;
+    void:triples            317989 ;
+    void:entities           27974 ;
+    void:distinctSubjects   27974 ;
+    void:classPartition     <https://purl.net/climatesense/lack/dataset/kg/class/Person> ,
+                            <https://purl.net/climatesense/lack/dataset/kg/class/Collective> ;
+    void:subset             <https://purl.net/climatesense/lack/dataset/kg/links/wikidata> ,
+                            <https://purl.net/climatesense/lack/dataset/kg/links/dbpedia> ;
+    dcat:distribution       <https://purl.net/climatesense/lack/dataset/kg/dist/ttl> ,
+                            <https://purl.net/climatesense/lack/dataset/kg/dist/sparql> .
+
+# ---------------------------------------------------------------
+# Creator and publisher
+# ---------------------------------------------------------------
+
+<https://orcid.org/0000-0002-3184-5407>
+    a foaf:Person ;
+    foaf:name "Enrico Daga" .
+
+<https://climatesense-project.eu/>
+    a foaf:Organization ;
+    foaf:name "Climate Sense Project" .
+
+# ---------------------------------------------------------------
+# Class partitions
+# ---------------------------------------------------------------
+
+<https://purl.net/climatesense/lack/dataset/kg/class/Person>
+    a void:Dataset ;
+    void:class  <https://purl.net/climatesense/lack/ns#Person> ;
+    void:entities 10370 .
+
+<https://purl.net/climatesense/lack/dataset/kg/class/Collective>
+    a void:Dataset ;
+    void:class  <https://purl.net/climatesense/lack/ns#Collective> ;
+    void:entities 17604 .
+
+# ---------------------------------------------------------------
+# Linksets
+# ---------------------------------------------------------------
+
+<https://purl.net/climatesense/lack/dataset/kg/links/wikidata>
+    a void:Linkset ;
+    dc:title                "LACK KG — Wikidata links"@en ;
+    void:subjectsTarget     <https://purl.net/climatesense/lack/dataset/kg> ;
+    void:objectsTarget      <http://www.wikidata.org/> ;
+    void:linkPredicate      owl:sameAs ;
+    void:triples            8280 .
+
+<https://purl.net/climatesense/lack/dataset/kg/links/dbpedia>
+    a void:Linkset ;
+    dc:title                "LACK KG — DBpedia links"@en ;
+    void:subjectsTarget     <https://purl.net/climatesense/lack/dataset/kg> ;
+    void:objectsTarget      <http://dbpedia.org/> ;
+    void:linkPredicate      owl:sameAs ;
+    void:triples            8726 .
+
+# ---------------------------------------------------------------
+# Distributions
+# ---------------------------------------------------------------
+
+<https://purl.net/climatesense/lack/dataset/kg/dist/ttl>
+    a dcat:Distribution ;
+    dc:title        "LACK KG — Turtle download"@en ;
+    dcat:downloadURL <https://purl.net/climatesense/lack/KG.ttl> ;
+    dcat:mediaType  "text/turtle" .
+
+<https://purl.net/climatesense/lack/dataset/kg/dist/sparql>
+    a dcat:Distribution , sd:Service ;
+    dc:title            "LACK KG — SPARQL endpoint"@en ;
+    dcat:accessURL      <https://sparql.climatesense.kmi.tools/climatesense> ;
+    sd:endpoint         <https://sparql.climatesense.kmi.tools/climatesense> ;
+    sd:defaultDataset   <https://purl.net/climatesense/lack/dataset/kg/sparql-dataset> .
+
+<https://purl.net/climatesense/lack/dataset/kg/sparql-dataset>
+    a sd:Dataset ;
+    sd:namedGraph <https://purl.net/climatesense/lack/dataset/kg/sparql-graph> .
+
+<https://purl.net/climatesense/lack/dataset/kg/sparql-graph>
+    a sd:NamedGraph ;
+    sd:name <https://purl.net/climatesense/lack> .
