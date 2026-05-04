@@ -4,7 +4,7 @@ title: Home
 
 # LACK Knowledge Graph
 
-**Lobbying Against Climate Knowledge** — a knowledge graph of actors, organisations, and relationships involved in lobbying against climate science and policy.
+**Lobbying Agents, Climate, and Knowledge** — a knowledge graph of agents, organisations, and relationships involved in lobbying against climate science and policy.
 
 LACK maps the networks of people and organisations that work to undermine climate science awareness and climate policy, drawing on real-world sources and extracting structured relationships using a purpose-built ontology.
 
