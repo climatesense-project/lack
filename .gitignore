@@ -3,4 +3,7 @@ __pycache__/
 *.pyc
 .DS_Store
 .python3.12
+local.sh
+querytime.py
+sync.sh
 
