@@ -591,13 +591,13 @@ ORDER BY ?tankLabel`
     title: 'Persons by source (Desmog)',
     desc: 'Persons whose profiles come from Desmog',
     query: `${PREFIXES}
-SELECT (MIN(?labell) AS ?label) (MIN(?source) AS ?source)
+SELECT (MIN(?labell) AS ?label) (MIN(?sourcee) AS ?source)
 FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?p rdf:type lack:Person .
   ?p rdfs:label ?labell .
-  ?p rdfs:seeAlso ?source .
-  FILTER(CONTAINS(STR(?source), "desmog.com"))
+  ?p rdfs:seeAlso ?sourcee .
+  FILTER(CONTAINS(STR(?sourcee), "desmog.com"))
 }
 GROUP BY ?p
 ORDER BY ?label
@@ -607,12 +607,12 @@ LIMIT 100`
     title: 'Organisations derived from others',
     desc: 'Derivation / spin-off relationships',
     query: `${PREFIXES}
-SELECT (MIN(?childLabel) AS ?childLabel) (MIN(?parentLabel) AS ?parentLabel)
+SELECT (MIN(?childLabell) AS ?childLabel) (MIN(?parentLabell) AS ?parentLabel)
 FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?child lack:derivedFrom ?parent .
-  ?child rdfs:label ?childLabel .
-  ?parent rdfs:label ?parentLabel .
+  ?child rdfs:label ?childLabell .
+  ?parent rdfs:label ?parentLabell .
 }
 GROUP BY ?child ?parent
 ORDER BY ?parentLabel`
@@ -621,12 +621,12 @@ ORDER BY ?parentLabel`
     title: 'Active entities in a year range',
     desc: 'Entities active between 2010 and 2020',
     query: `${PREFIXES}
-SELECT ?entity (MIN(?labell) AS ?label) (MIN(?since) AS ?since) (MIN(?until) AS ?until)
+SELECT ?entity (MIN(?labell) AS ?label) (MIN(?sincee) AS ?since) (MIN(?untill) AS ?until)
 FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?entity rdfs:label ?labell .
-  OPTIONAL { ?entity lack:activeSince ?since }
-  OPTIONAL { ?entity lack:activeUntil ?until }
+  OPTIONAL { ?entity lack:activeSince ?sincee }
+  OPTIONAL { ?entity lack:activeUntil ?untill }
   FILTER(?since >= "2010"^^xsd:gYear && ?until <= "2020"^^xsd:gYear)
 }
 GROUP BY ?entity
@@ -636,13 +636,13 @@ ORDER BY ?since ?label`
     title: 'Coalitions and their members',
     desc: 'Members of coalition-type organisations',
     query: `${PREFIXES}
-SELECT (MIN(?coalitionLabel) AS ?coalitionLabel) (MIN(?memberLabel) AS ?memberLabel)
+SELECT (MIN(?coalitionLabell) AS ?coalitionLabel) (MIN(?memberLabell) AS ?memberLabel)
 FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?coalition rdf:type lack-type:coalition .
   ?coalition lack:hasMember ?member .
-  ?coalition rdfs:label ?coalitionLabel .
-  ?member rdfs:label ?memberLabel .
+  ?coalition rdfs:label ?coalitionLabell .
+  ?member rdfs:label ?memberLabell .
 }
 GROUP BY ?coalition ?member
 ORDER BY ?coalitionLabel ?memberLabel`
@@ -651,14 +651,14 @@ ORDER BY ?coalitionLabel ?memberLabel`
     title: 'Publications contributed to',
     desc: 'Persons who contributed to publications',
     query: `${PREFIXES}
-SELECT (MIN(?personLabel) AS ?personLabel) (MIN(?pubLabel) AS ?pubLabel)
+SELECT (MIN(?personLabell) AS ?personLabel) (MIN(?pubLabell) AS ?pubLabel)
 FROM <https://purl.net/climatesense/lack>	
 WHERE {
   ?person rdf:type lack:Person .
   ?person lack:contributedTo ?pub .
   ?pub rdf:type lack-type:publication .
-  ?person rdfs:label ?personLabel .
-  ?pub rdfs:label ?pubLabel .
+  ?person rdfs:label ?personLabell .
+  ?pub rdfs:label ?pubLabell .
 }
 GROUP BY ?person ?pub
 ORDER BY ?personLabel
