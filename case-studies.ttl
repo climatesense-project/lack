@@ -27,6 +27,14 @@ cs:cs-10 a cs:CaseStudy ;
     cs:relation1 lack:memberOf ;
     cs:target lack-entity:3128f7b9a0c40ad5344e9c8bad818635b578c3d5 .
 
+cs:cs-11 a cs:CaseStudy ;
+    rdfs:label "Blair Foundation → Fraser Institute → Exxon" ;
+    cs:entity lack-entity:55c3a7e118a2325f3ffeab456c86053324d0f0dc ;
+    cs:proxy lack-entity:5d06db7e543f51abdc90687653a5467e7d2fc29f ;
+    cs:relation lack:hasFunder ;
+    cs:relation1 lack:fundedBy ;
+    cs:target lack-entity:28c72699190c4faf8190c0dd8b6eb7ceb5997919 .
+
 cs:cs-2 a cs:CaseStudy ;
     rdfs:label "Nick Stavropoulos → PG&E → Zero Emission Transportation Association (ZETA)" ;
     cs:entity lack-entity:ef07dfcd87c270c2e5bbc3d99b1f654deb41787d ;
@@ -204,6 +212,17 @@ lack-stmt:6301003750bfe646383a1449de2f4c3220d9432e a rdf:Statement ;
         lack-prov:climateSenseActivity ;
     lack:since "1985"^^xsd:gYear .
 
+lack-stmt:6495c39f3ec616ef2a74ba5aa042e9010f033115 a rdf:Statement ;
+    dct:source "https://www.desmog.com" ;
+    rdf:object lack-entity:28c72699190c4faf8190c0dd8b6eb7ceb5997919 ;
+    rdf:predicate lack:fundedBy ;
+    rdf:subject lack-entity:5d06db7e543f51abdc90687653a5467e7d2fc29f ;
+    rdfs:seeAlso "https://www.desmog.com/willie-soon/" ;
+    prov:wasDerivedFrom <https://www.desmog.com/willie-soon/> ;
+    prov:wasGeneratedBy lack-prov:climateSense,
+        lack-prov:climateSenseActivity ;
+    lack:since "1998"^^xsd:gYear .
+
 lack-stmt:6ab56102be32dd2858fe07edb6ddb5b17acdd407 a rdf:Statement ;
     dct:source "https://lobbymap.org" ;
     rdf:object lack-entity:b436f753be18a51bb8b3c239600877aebeb9eb50 ;
@@ -224,6 +243,18 @@ lack-stmt:6fb897a3ca640c80665f27ba5d2464a0cdc0c64f a rdf:Statement ;
     prov:wasGeneratedBy lack-prov:climateSense,
         lack-prov:climateSenseActivity .
 
+lack-stmt:80139d1f74c1efffd6e8e8b58a0478d5397a257e a rdf:Statement ;
+    dct:source "https://www.desmog.com" ;
+    rdf:object lack-entity:28c72699190c4faf8190c0dd8b6eb7ceb5997919 ;
+    rdf:predicate lack:fundedBy ;
+    rdf:subject lack-entity:5d06db7e543f51abdc90687653a5467e7d2fc29f ;
+    rdfs:seeAlso "https://www.desmog.com/tad-murty/" ;
+    prov:wasDerivedFrom <https://www.desmog.com/tad-murty/> ;
+    prov:wasGeneratedBy lack-prov:climateSense,
+        lack-prov:climateSenseActivity ;
+    lack:since "2003"^^xsd:gYear ;
+    lack:until "2004"^^xsd:gYear .
+
 lack-stmt:82f5d944c5992019262b43e2c6ed6a1f7df9073e a rdf:Statement ;
     dct:source "https://www.desmog.com" ;
     rdf:object lack-entity:9ada4615d4959746aa4bbfe4f9c5100b15ead0bf ;
@@ -233,6 +264,28 @@ lack-stmt:82f5d944c5992019262b43e2c6ed6a1f7df9073e a rdf:Statement ;
     prov:wasDerivedFrom <https://www.desmog.com/larry-bell/> ;
     prov:wasGeneratedBy lack-prov:climateSense,
         lack-prov:climateSenseActivity .
+
+lack-stmt:87b733998155c2ea7363f65adb1e4cc37ae0654f a rdf:Statement ;
+    dct:source "https://www.desmog.com" ;
+    rdf:object lack-entity:28c72699190c4faf8190c0dd8b6eb7ceb5997919 ;
+    rdf:predicate lack:fundedBy ;
+    rdf:subject lack-entity:5d06db7e543f51abdc90687653a5467e7d2fc29f ;
+    rdfs:seeAlso "https://www.desmog.com/reynald-du-berger/" ;
+    prov:wasDerivedFrom <https://www.desmog.com/reynald-du-berger/> ;
+    prov:wasGeneratedBy lack-prov:climateSense,
+        lack-prov:climateSenseActivity .
+
+lack-stmt:90d77bef0c4dae02b93a276d20d1ee55b33513e8 a rdf:Statement ;
+    dct:source "https://www.desmog.com" ;
+    rdf:object lack-entity:28c72699190c4faf8190c0dd8b6eb7ceb5997919 ;
+    rdf:predicate lack:fundedBy ;
+    rdf:subject lack-entity:5d06db7e543f51abdc90687653a5467e7d2fc29f ;
+    rdfs:seeAlso "https://www.desmog.com/wibjorn-karlen/" ;
+    prov:wasDerivedFrom <https://www.desmog.com/wibjorn-karlen/> ;
+    prov:wasGeneratedBy lack-prov:climateSense,
+        lack-prov:climateSenseActivity ;
+    lack:since "2003"^^xsd:gYear ;
+    lack:until "2004"^^xsd:gYear .
 
 lack-stmt:a5bddccd5494fd2d86a202fb9c0243eda2ec13a6 a rdf:Statement ;
     dct:source "https://influencemap.org" ;
@@ -307,6 +360,16 @@ lack-stmt:f43908d9e4d2da5cf44cf9cf8d64b5604d22a180 a rdf:Statement ;
     prov:wasGeneratedBy lack-prov:climateSense,
         lack-prov:climateSenseActivity .
 
+lack-stmt:fee71e7f2f472329eb3f858120c81db915a7b912 a rdf:Statement ;
+    dct:source "https://www.desmog.com" ;
+    rdf:object lack-entity:28c72699190c4faf8190c0dd8b6eb7ceb5997919 ;
+    rdf:predicate lack:fundedBy ;
+    rdf:subject lack-entity:5d06db7e543f51abdc90687653a5467e7d2fc29f ;
+    rdfs:seeAlso "https://www.desmog.com/bob-carter/" ;
+    prov:wasDerivedFrom <https://www.desmog.com/bob-carter/> ;
+    prov:wasGeneratedBy lack-prov:climateSense,
+        lack-prov:climateSenseActivity .
+
 lack-stmt:ff24f84e746434d2b439acc661dd8d1962f82454 a rdf:Statement ;
     dct:source "https://influencemap.org" ;
     rdf:object lack-entity:d7ef097a15b8ba7a7273641ff591eb2ea31e9f04 ;
@@ -337,6 +400,13 @@ lack-stmt:ff55cac251bc05d0fe2478c1ffe5eef491418adf a rdf:Statement ;
     prov:wasDerivedFrom <https://lobbymap.org/company/Tata-Motors/projectlink/Tata-Motors-in-Climate-Change> ;
     prov:wasGeneratedBy lack-prov:climateSense,
         lack-prov:climateSenseActivity .
+
+lack-entity:55c3a7e118a2325f3ffeab456c86053324d0f0dc a lack:Collective,
+        lack-type:foundation ;
+    rdfs:label "Blair Foundation" ;
+    rdfs:seeAlso "https://www.desmog.com/fraser-institute/" ;
+    owl:sameAs lack-entity:5d06db7e543f51abdc90687653a5467e7d2fc29f ;
+    lack:hasFunder lack-entity:5d06db7e543f51abdc90687653a5467e7d2fc29f .
 
 lack-entity:20bdd8349e3f76e3df377abd704e94489ea31e8f a lack:Collective,
         lack-type:consulting_firm ;
@@ -2028,6 +2098,244 @@ lack-entity:fd65ee9473f14dedba73e4f0c32d7dbb9ddce1aa a lack:Collective,
         lack-entity:fd674cbc6183916140d207c710d1ba052def59b4,
         <https://www.wikidata.org/entity/Q54173> ;
     lack:memberOf lack-entity:081746699dd91bed12fc41f5544872b915d5dfdd .
+
+lack-entity:5d06db7e543f51abdc90687653a5467e7d2fc29f a lack:Collective,
+        lack-type:think_tank ;
+    rdfs:label "Fraser Institute",
+        "Fraser Institute, Canada",
+        "The Fraser Institute" ;
+    rdfs:seeAlso "https://www.desmog.com/alberta-prosperity-fund/",
+        "https://www.desmog.com/andrew-coyne/",
+        "https://www.desmog.com/aurea-foundation/",
+        "https://www.desmog.com/austrian-economics-center/",
+        "https://www.desmog.com/bjorn-lomborg/",
+        "https://www.desmog.com/bob-carter/",
+        "https://www.desmog.com/boris-winterhalter/",
+        "https://www.desmog.com/brownstone-institute/",
+        "https://www.desmog.com/canadian-constitution-foundation/",
+        "https://www.desmog.com/canadian-energy-centre-cec/",
+        "https://www.desmog.com/canadians-for-affordable-energy/",
+        "https://www.desmog.com/christopher-essex/",
+        "https://www.desmog.com/cooler-heads-coalition/",
+        "https://www.desmog.com/copenhagen-consensus-center/",
+        "https://www.desmog.com/david-bellamy/",
+        "https://www.desmog.com/david-henderson/",
+        "https://www.desmog.com/david-r-henderson/",
+        "https://www.desmog.com/donald-j-boudreaux/",
+        "https://www.desmog.com/donner-canadian-foundation/",
+        "https://www.desmog.com/ezra-levant/",
+        "https://www.desmog.com/fraser-institute/",
+        "https://www.desmog.com/frontier-centre-public-policy/",
+        "https://www.desmog.com/gerrit-cornelis-van-kooten/",
+        "https://www.desmog.com/heritage-foundation/",
+        "https://www.desmog.com/ian-clark/",
+        "https://www.desmog.com/joel-wood/",
+        "https://www.desmog.com/joseph-d-aleo/",
+        "https://www.desmog.com/julian-morris/",
+        "https://www.desmog.com/kenneth-green/",
+        "https://www.desmog.com/macdonald-laurier-institute/",
+        "https://www.desmog.com/manhattan-institute-policy-research/",
+        "https://www.desmog.com/manning-foundation-for-democratic-education/",
+        "https://www.desmog.com/mont-pelerin-society/",
+        "https://www.desmog.com/montreal-economic-institute/",
+        "https://www.desmog.com/nathalie-elgrably-levy/",
+        "https://www.desmog.com/olavi-karner/",
+        "https://www.desmog.com/petr-chylek/",
+        "https://www.desmog.com/preston-manning/",
+        "https://www.desmog.com/reason-foundation/",
+        "https://www.desmog.com/reynald-du-berger/",
+        "https://www.desmog.com/ross-mckitrick/",
+        "https://www.desmog.com/scaife-family-foundations/",
+        "https://www.desmog.com/secondstreet-org/",
+        "https://www.desmog.com/sherwood-b-idso/",
+        "https://www.desmog.com/steve-koonin/",
+        "https://www.desmog.com/stewart-muir/",
+        "https://www.desmog.com/tad-murty/",
+        "https://www.desmog.com/virginia-institute-public-policy/",
+        "https://www.desmog.com/wibjorn-karlen/",
+        "https://www.desmog.com/william-kininmonth/",
+        "https://www.desmog.com/willie-soon/" ;
+    owl:sameAs <http://dbpedia.org/resource/Fraser_Institute>,
+        lack-entity:00730944d06d3a144cff7a7e96f6a840212c9e2c,
+        lack-entity:068aba19b6f8ab8dd09bf53a5e0b4cc51299fe51,
+        lack-entity:0760966b8375668382aabf7170b07f5faad1040d,
+        lack-entity:083c91e1b569cc9dd8aba4088cf9fb60560c9f73,
+        lack-entity:085fed089e82d3d0e5016b7ac654d52957bc75b2,
+        lack-entity:0abc5235ba24d68ef5b3dd6e61e8f3125ec2290d,
+        lack-entity:0b5c14884e1153c12a37b9976bd12e51b70cd39f,
+        lack-entity:0e35d155b730c52e67abc837e4fec9f4dc2650c7,
+        lack-entity:1056deb33b5ffe0fb7e084d27eb226cf62b29494,
+        lack-entity:11f270a74dd16c555e7ad653b91db77fd7227283,
+        lack-entity:122c7d292ffdeaecc031b9a5fa0c5edc9a410527,
+        lack-entity:15cde1e90481936aca43c8680777fa0bb48e408f,
+        lack-entity:164dfda836f760e7cec46e571d7ff6a0025b76b0,
+        lack-entity:1765400bc63872ee4728d6f80b79e4976b92f8d4,
+        lack-entity:18dbf7d70f77107ee0fc3dad55c2c819b6458585,
+        lack-entity:19d5b39490c43ddb341011effc3634cf291b5643,
+        lack-entity:1aad2881d3bd73ce0043c190289ab4b0c6429286,
+        lack-entity:1ae697bb036762e09625def224e791c4260e1b3b,
+        lack-entity:1f2ff19a4801b6fbf6c21827ff752699acfd2405,
+        lack-entity:206c9c26551cf7cb311d2d6cf0bf9e9bc83dbb5c,
+        lack-entity:272f86e6b2bcd0a40258405da4b64d41e6db97f5,
+        lack-entity:277937811c66f42cedb84d098db090086da60435,
+        lack-entity:279e1387ff4203609a78c905fd96303f0d76d5f6,
+        lack-entity:285001c2422f801f69f0c236916430548d810dde,
+        lack-entity:28c72699190c4faf8190c0dd8b6eb7ceb5997919,
+        lack-entity:28eadade4b280c8ad4ceee75bc61e927c5c10e58,
+        lack-entity:293804a17229e72bf2b3ed722350ab4d6276cd5d,
+        lack-entity:29d93f72d83251c1907fe376311a95e51154ff19,
+        lack-entity:2a3a1242a2db2ecd919a6b6ea81cd1d80b4f58fd,
+        lack-entity:2ec3da0029df404392b80d0ec1d960fe69aed256,
+        lack-entity:325998bbd537caf35c360ce87a4fa302d2af12d3,
+        lack-entity:33d29202f46dcd280ad62267cd6c8c312f7a4a48,
+        lack-entity:34015b91c471e599285dfc71c944741e3fbca99a,
+        lack-entity:3607b629893298465d4a25f2cda19fd3fc060b38,
+        lack-entity:37ea148e5bd8b87a73a20837e9dced1f5bf5d3a9,
+        lack-entity:383f829fb11effbf1e71dd7459e13f4a0bc24b7e,
+        lack-entity:3963b88aa48e1eb5f80aab0b16f479bce9ef9210,
+        lack-entity:3ecbd70adf7dddb93d4fa5cd57fde603c75617de,
+        lack-entity:3f059d56138c75293999d454137095f22f9560c5,
+        lack-entity:4015c2d86a9939d82c8319f7015dfef2edbb706b,
+        lack-entity:42d7351f0c327525f7b6ac61d47ee197c87394d0,
+        lack-entity:45790242d78d72aa28306fb06ce3fc6e4bd0e59a,
+        lack-entity:470b0e270210394867ffbdcabd179cf422f22abe,
+        lack-entity:4b33ecd44317fe64846edff517b368789e3a1f32,
+        lack-entity:4d6778f58015a6c770947be824b05e4fa41c5783,
+        lack-entity:4f174af0824d28a867732101bc3124a3569cc739,
+        lack-entity:5036763095bb2fbf380d78206ad6210abee89642,
+        lack-entity:51f8cd32450d321a699cb730968a527fe012775c,
+        lack-entity:5358c4f6a8d03c660554ae6320fac6b251ef2e07,
+        lack-entity:550ee751d7ac292e5858a9d52696a77278347da2,
+        lack-entity:55c3a7e118a2325f3ffeab456c86053324d0f0dc,
+        lack-entity:568c36369526da5f69d6d719853b6ea06d1bae83,
+        lack-entity:56cde8a4abd164d3886f776b169e6e345de62697,
+        lack-entity:5a88bbfe5c4a3dcb4ddfe8652d58a4da6ad8729c,
+        lack-entity:5baa8997b557d2d3f7668509982bf501addf36de,
+        lack-entity:5c567b7c02ebd06d9e735d2178f2337fed7aad00,
+        lack-entity:5d824f767a9949695662ede3c0faf09394449dda,
+        lack-entity:5ee3fb891a68cb8a0cc6fbb703391e4485b121e4,
+        lack-entity:5f794cc610546f2f8a84341500b7311af0a939ae,
+        lack-entity:602cb158951e200d9113f095d8828bcdc5e41a2c,
+        lack-entity:6169c9f4aef86a462d58812101cd1c6f8048cef5,
+        lack-entity:620ee3ff0b07615f24b427c756cebe20f703e650,
+        lack-entity:623f2277beed0af1854a7e0b44c073e82c08ffb3,
+        lack-entity:642865b0beb7eb9f1299b9a799ec4b3dfd38cbdc,
+        lack-entity:674215ee937f76a2a36947eccaef0eef80cb5e70,
+        lack-entity:684cd986aa78ac1f850f4dcdb8e7ed5f6312952e,
+        lack-entity:6c0f929fca77c86ccaa13c896aef69ac8717e4bc,
+        lack-entity:6c4bc87ff1123bc47a8049c04114ca8a9d0cb1e0,
+        lack-entity:6cf045526c9161496456333728a4bfc4631a5a01,
+        lack-entity:6d3f49fab3d2521105db3bad84f4ab1d73d6c2ef,
+        lack-entity:6fb82c040b3d434d424b4fb7c557570f2f897715,
+        lack-entity:70a3951ca1ddebc18800a9b397414bb55a9bc349,
+        lack-entity:7337b55f289c744277c7d20b345df158091e5b5d,
+        lack-entity:739a71f54c25432daa971225b1f4ca3bc45e63d8,
+        lack-entity:74987b15213323547ca15824eae55e60b1f4ad75,
+        lack-entity:7526336540fcc040c482a135a180d95c55c81a44,
+        lack-entity:75b7fa923fb2c0917b7467990f5670a442470162,
+        lack-entity:77891b8ac2882f9eae3773583ab408e7502ad76e,
+        lack-entity:790d7c2f8a1d677d366d79fefced07034453cd46,
+        lack-entity:799153e1546ffbb9d3a76045e110ec092f9b5f1f,
+        lack-entity:7ad627bc3d8d91a56e3dd5c44c63cc7f1a73b40d,
+        lack-entity:7b645e128a218f981eee1cfb8b9a69dc0c0cc298,
+        lack-entity:7c73e456c94f5bf6c973ba27ce50493dda2d6f14,
+        lack-entity:7fd135326c11df831197dcd3606f258ecd8aaff7,
+        lack-entity:8052dfb06d96bcdde9d89da527acbb05c64151bc,
+        lack-entity:8397f8216d18a8c8019afc90b531bab81eaefb89,
+        lack-entity:8426d769af8e7ecfcae2f0f98b2560ec35f627cf,
+        lack-entity:849d79f456e2a8ec28d75721830def42ffa427c2,
+        lack-entity:84d62baafa678532b84642fb794153e3f28f8c7c,
+        lack-entity:861e0dac74800f3ecf896e66f69ab42197b874c3,
+        lack-entity:8927beb898664c5f9e38d06d0993d77d6b9f491e,
+        lack-entity:8a3dd287fd0d4d82d43df88dbbae5f7283617020,
+        lack-entity:8e0f82c84d757852b3766d01d2723b6e16cf018a,
+        lack-entity:8eac5285d80e56f8fff35871dd136cbbc16cb4f0,
+        lack-entity:8ed947fa4ab2e948201e4732cb7ebd4b6a1b68ec,
+        lack-entity:92d8212ade1b767f0076cd482db5e35e72ce1f9d,
+        lack-entity:96260d072a75d2e431a4e35da1370d4034753a80,
+        lack-entity:972c281b61171353ad56bde3033b8eefa808cfd2,
+        lack-entity:98216335f6d22eb7265da16cd4da5f17c927d5f9,
+        lack-entity:9ab34e66372ff3b36bf79ac74e3ae81aca4644c3,
+        lack-entity:9bdf6fc265b41f1d51cf6af9fd44e18d45c37449,
+        lack-entity:9c112096fc98c7a55c7541dbe68c3cdd9944e7f1,
+        lack-entity:9c8aa22f5f5f4619fd8b4fbcccae9179f1a8ff1f,
+        lack-entity:9db0d55cbefe92697fb2d3f518c5cfc2bd0afb4d,
+        lack-entity:9ed9244c004f998e0ee70dc987e66cf52cacda5d,
+        lack-entity:9fa448e9315fb1d5eb9ad19eeb1e0a1f80bf7808,
+        lack-entity:a2e0c55ca0d13fce23d977373c9ab6ba865e7b76,
+        lack-entity:a3eec036d8411cdddfc9d574b8a1e184be6abdfb,
+        lack-entity:a75ae7549de8270ae11ce3c969988af0937513c3,
+        lack-entity:a8028f206dff3c8eb2f8d62036e5cfc715d0feac,
+        lack-entity:a82ed7180193a58c22ad9a3abac1b2137bb484b2,
+        lack-entity:a8cfcebe1e5f81179a7a0e7ea814daba02565aa1,
+        lack-entity:aa698d6deca44f6e4c1a0d6ff84979d3570d1b00,
+        lack-entity:abda4bf9e828cfe3acf3fabf9b4074d9c5ab04ce,
+        lack-entity:ac5551bef5158ea2bd007033533d744a3cf8b716,
+        lack-entity:b07f4ab22f65c810ac605588da8c11b90b0da274,
+        lack-entity:b254fd4074932738e51b9b65b40a3f80f766369a,
+        lack-entity:b2badf7ad2378556484b3e3dc2065ca64d5e2119,
+        lack-entity:b331456d35331ad52ca4a90406399ea22e2f0e09,
+        lack-entity:b3989c3ae53e95398e17d5076b50f1d6176b30e2,
+        lack-entity:b4cf2825a356cda5ab0e0714f4f31217a6d618ed,
+        lack-entity:b5af467513444e0f3d8b44ca0b01d1c6ad86fb24,
+        lack-entity:b623aec8b62ad74cbdeabb9fbd4369f30f8c7aba,
+        lack-entity:b651dbfe7389f452ae7a0eb3bf302c791105d23c,
+        lack-entity:b8788f9c06589b4a83b85c394a829c2d74aebf87,
+        lack-entity:b9285838c43ccb15cee9aeebeda15a03c7187939,
+        lack-entity:ba58bc84f6f992a86fca421a5a7418011b2873fe,
+        lack-entity:bb8235d00f854c2593f4d43cf5077e71934257a7,
+        lack-entity:bba0c76ab10e2091ffd53bac10e7c2fa2464bbe6,
+        lack-entity:bbfb9e8b46a421cf1a62482d271cbfffb6000834,
+        lack-entity:be510773826fa9c63e55854b91e7a926cd9254a9,
+        lack-entity:be9a43dca5ab4c16d9264484dd1d09b5760d3024,
+        lack-entity:becedf9062244f30a1bdd811cfa0285564c034d0,
+        lack-entity:c0ecbb50df4057329c84436fd12b55d660a9895a,
+        lack-entity:c3ba9b65401a78ff56d25ab5fca867a9e5e2c499,
+        lack-entity:c57f58d07b2cf51a4e07a14a59affba39459db62,
+        lack-entity:c59c3d851d68e24171770530ad3b3baa1e04cbe9,
+        lack-entity:c6032a06dfde6456309d94991e452a5cd6260f77,
+        lack-entity:c8204ff10159949a79ee437e7ed48725a512cb74,
+        lack-entity:cab93c5a310fbe04c4cb2e49ddd486307d47cf65,
+        lack-entity:cacf0d210fc36f0edd2042910378c40b9bc553a7,
+        lack-entity:caf75d71b8cf04440e99def8d9092d0d6ee83b82,
+        lack-entity:cb0a8eea3b31536f60b93e77de64a4a4f25c4da6,
+        lack-entity:cba4d555726bbfa28d137064f0a0d87ff600329b,
+        lack-entity:cba5bfeae40a21037e4f5c0aa93fdc49851a2066,
+        lack-entity:cc0e61936a6ccbc0edb15bd8fedf21888a23bf41,
+        lack-entity:cdfcfb0636a3b33d22d43e180fcda28227d78a86,
+        lack-entity:cf31e3ab4dab377011e2be59f1576d226631246c,
+        lack-entity:d2788cc80edee0ed0a7e5eeb5a62057db838f667,
+        lack-entity:d2c3ff7db531617f205f4247fbb8399c4a6c1b76,
+        lack-entity:d2dcc74aca2694812c9144c74414c9643f2f034f,
+        lack-entity:d2e71a4f05660f46eb1382c8b07ccfc122f7126d,
+        lack-entity:d50839b39541d86a8f57be94fbd7a2b487094a62,
+        lack-entity:d51cc95ee8af4e5d1b4144fc163af7c7ad93e4af,
+        lack-entity:db6033cdd3c3a10a805fe984f2c145645030a98c,
+        lack-entity:dc34a35be74ab81b35f65a83d3a73b5a8ee1b1ed,
+        lack-entity:de451a36bee918b45f59acec609f4d8a8a22b95f,
+        lack-entity:e1dd42b3a80a7ce71c3b9b79b240c4f5989dd347,
+        lack-entity:e2a0dc6532035c9abab0e109467259057a362933,
+        lack-entity:e5119785690e2ee61dfd7f9cfcdce57e2882837b,
+        lack-entity:e6f51c7c5e58632259fe6c6d57e4757cedb7bad5,
+        lack-entity:e94347282e13f1d00c74e1ebd339fcecc8a9c992,
+        lack-entity:eee310b82a6d71a77ad8ea67b7b00d24405dc8e4,
+        lack-entity:ef34f71d724bdb11c3ef931b11650646a0812b35,
+        lack-entity:f1319cc80383ff10bc0a04d5a6c10c8e2a6cdc77,
+        lack-entity:f1e83733d576071ebc8e53f311448cec6e44205f,
+        lack-entity:f43906cd7755f5126325640832107851a798e227,
+        lack-entity:f49e8f96db95cfafb4fc4e965bba3178dde4105a,
+        lack-entity:f587720ea998a8fe19f473b1a75f78a2ce112537,
+        lack-entity:f7b850cf80ea11a1796f303a64693848fe85ae29,
+        lack-entity:f9fff4816c2495348366b537549a9d3102d8e130,
+        lack-entity:fcc6796bb77633e79440fdd8ffc990dad92e99ce,
+        lack-entity:fcc6bb9fe490e19b3702c99ac3e06d7a1bad57cd,
+        lack-entity:fcc915e069c5e3ec5e3823f04bb2e07cfbb6c6ee,
+        lack-entity:fce23c39d645aeb22335e8d95f94cc326ae2e386,
+        lack-entity:fd380860e5b6ec6b46fded88e62200e73d09f028,
+        lack-entity:fda75ff44f3c412ad67be4c41df5715ff9859f5b,
+        lack-entity:fe661f07a5d85281166937e3d79f9b67954e588d,
+        <https://www.wikidata.org/entity/Q1451353> ;
+    lack:fundedBy lack-entity:28c72699190c4faf8190c0dd8b6eb7ceb5997919 .
 
 lack-entity:b436f753be18a51bb8b3c239600877aebeb9eb50 a lack:Collective,
         lack-type:advocacy_group,
