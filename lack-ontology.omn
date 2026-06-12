@@ -18,7 +18,7 @@ Ontology: <https://purl.net/climatesense/lack/ns#>
 
 
 Annotations: 
-    cc:license <https://creativecommons.org/licenses/by/4.0/>,
+    cc:license <https://creativecommons.org/licenses/by-nc/4.0/>,
     dc:creator <https://orcid.org/0000-0002-3184-5407>,
     dc:description "Lobbying Against Climate science Knowledge — a lightweight ontology for describing relationships between people and organisations relevant to lobbying against climate change awareness and policies."@en,
     dc:issued "2026-04-26"^^xsd:date,

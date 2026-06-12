@@ -410,6 +410,6 @@ The following metadata is provided in accordance with the [LOV Vocabulary Design
 | `dc:creator` | [Enrico Daga](https://orcid.org/0000-0002-3184-5407) |
 | `dc:publisher` | [Climate Sense Project](https://climatesense-project.eu/) |
 | `dc:rights` | Copyright © 2026 Climate Sense Project |
-| `cc:license` | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| `cc:license` | [CC BY NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) |
 | `rdfs:isDefinedBy` | Applied to all classes and properties |
 | `vs:term_status` | `stable` on all terms |

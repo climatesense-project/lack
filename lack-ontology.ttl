@@ -28,7 +28,7 @@
     dc:creator                    <https://orcid.org/0000-0002-3184-5407> ;
     dc:publisher                  <https://climatesense-project.eu/> ;
     dc:rights                     "Copyright © 2026 Climate Sense Project"@en ;
-    cc:license                    <https://creativecommons.org/licenses/by/4.0/> .
+    cc:license                    <https://creativecommons.org/licenses/by-nc/4.0/> .
 
 <https://orcid.org/0000-0002-3184-5407>
     a foaf:Person ;

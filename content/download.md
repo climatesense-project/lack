@@ -48,4 +48,4 @@ You can query it interactively using the [Explore](explore/explore.html) page, o
 
 ## Licence
 
-The LACK ontology and data are released under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Please cite the ClimateSense project when using this resource.
+The LACK ontology and data are released under [CC BY NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). Please cite the ClimateSense project when using this resource.
