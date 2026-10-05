@@ -95,12 +95,12 @@ type,count,wikidata,dbpedia
 Relation counts:
 
 count
-142737
+125352
 
 Relation breakdown:
 
 relation,count
-https://purl.net/climatesense/lack/ns#associatedWith,88650
+https://purl.net/climatesense/lack/ns#associatedWith,71265
 https://purl.net/climatesense/lack/ns#hasMember,13427
 https://purl.net/climatesense/lack/ns#hasEmployee,10638
 https://purl.net/climatesense/lack/ns#hasContributor,6722
@@ -131,12 +131,12 @@ https://purl.net/climatesense/lack/ns#Collective,17604,5369,5210
 Relation counts:
 
 count
-188862
+171479
 
 Relation breakdown:
 
 relation,count
-https://purl.net/climatesense/lack/ns#associatedWith,91219
+https://purl.net/climatesense/lack/ns#associatedWith,73836
 https://purl.net/climatesense/lack/ns#hasMember,13456
 https://purl.net/climatesense/lack/ns#memberOf,13456
 https://purl.net/climatesense/lack/ns#employedBy,10638
