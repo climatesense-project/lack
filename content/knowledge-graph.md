@@ -105,7 +105,7 @@ Ongoing work includes error analysis, ontology refinement, and evaluation on Lob
 
 ## Entity Linking
 
-Entities extracted from text are linked to canonical identifiers in Wikidata and DBpedia, enabling cross-source deduplication and enrichment. Entity linking is complete for v1.0.
+Entities extracted from text are linked to canonical identifiers in Wikidata and DBpedia, enabling cross-source deduplication and enrichment. 
 
 Two methods were implemented and compared:
 

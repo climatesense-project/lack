@@ -404,12 +404,12 @@ The following metadata is provided in accordance with the [LOV Vocabulary Design
 | `vann:preferredNamespaceUri` | `https://purl.net/climatesense/lack/ns#` |
 | `dc:title` | LACK Ontology |
 | `dc:description` | Lobbying Against Climate science Knowledge — a lightweight ontology for describing relationships between people and organisations relevant to lobbying against climate change awareness and policies. |
-| `dc:issued` | 2026-04-26 |
-| `dc:modified` | 2026-04-28 |
-| `owl:versionInfo` | 1.0 |
+| `dc:issued` | {{ ontology_issued }} |
+| `dc:modified` | {{ ontology_modified }} |
+| `owl:versionInfo` | {{ ontology_version }} |
+| `cc:license` | <{{ ontology_license }}> |
 | `dc:creator` | [Enrico Daga](https://orcid.org/0000-0002-3184-5407) |
 | `dc:publisher` | [Climate Sense Project](https://climatesense-project.eu/) |
 | `dc:rights` | Copyright © 2026 Climate Sense Project |
-| `cc:license` | [CC BY NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/) |
 | `rdfs:isDefinedBy` | Applied to all classes and properties |
 | `vs:term_status` | `stable` on all terms |

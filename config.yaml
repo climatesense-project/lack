@@ -1,17 +1,24 @@
-site_title: "LACK Knowledge Graph"
-base_url: "/lack"
+site_title: LACK Knowledge Graph
+base_url: /lack
 nav:
-  - label: "Home"
-    file: "index.md"
-  - label: "About"
-    file: "about.md"
-  - label: "Knowledge Graph"
-    file: "knowledge-graph.md"
-  - label: "Ontology"
-    file: "ontology.md"
-  - label: "Download"
-    file: "download.md"
-  - label: "Case Studies"
-    file: "case-studies.md"
-  - label: "Explore"
-    url: "static/explore.html"
+- label: Home
+  file: index.md
+- label: About
+  file: about.md
+- label: Knowledge Graph
+  file: knowledge-graph.md
+- label: Ontology
+  file: ontology.md
+- label: Download
+  file: download.md
+- label: Case Studies
+  file: case-studies.md
+- label: Explore
+  url: static/explore.html
+release:
+  kg_version: '1.1'
+  kg_issued: '2026-04-26'
+  kg_modified: '2026-10-05'
+  kg_license: https://creativecommons.org/licenses/by-nc/4.0/
+  kgc_ref: v1.1
+  kgc_sha: 7370b3d

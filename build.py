@@ -14,6 +14,7 @@ import re
 import shutil
 import yaml
 import argparse
+import datetime
 import markdown as md_lib
 from collections import defaultdict
 
@@ -32,9 +33,12 @@ CS_CONTENT_DIR = os.path.join(ROOT, "content", "case-study")
 CS_OUTPUT_DIR  = os.path.join(ROOT, "_site", "case-study")
 
 EXPLORE_BASE = "https://climatesense-project.eu/lack/static/explore.html"
+KGC_REPO_URL = "https://github.com/enridaga/lack-kgc"
+ONTOLOGY_FILE= os.path.join(ROOT, "lack-ontology.ttl")
 
 # Extra files to copy verbatim into _site root
-VERBATIM_FILES = ["lack-ontology.ttl", "lack-ontology.omn", "KG.ttl"]
+VERBATIM_FILES = ["lack-ontology.ttl", "lack-ontology.omn", "KG.zip", "lack-dataset.ttl"]
+
 SHOW_TEMPORAL_COVERAGE = False
 
 # ── KGSTATS.md parsing ─────────────────────────────────────────────────────────
@@ -112,6 +116,10 @@ def parse_kgstats(path):
 
     # ── After inferencing total ────────────────────────────────────────────────
     after_total  = _first_int_after(after, "Relation counts:", r"^(\d+)$")
+    # ── KG file totals (output/KG.ttl) ─────────────────────────────────────────
+    kgfile          = _extract_section(text, "KG FILE")
+    kg_triples      = _first_int_after(kgfile, "Triple counts:", r"^(\d+)$")
+    kg_subjects     = _first_int_after(kgfile, "Distinct subjects:", r"^(\d+)$")
 
     def pct(n, total):
         return f"{round(n / total * 100)}%" if total else "n/a"
@@ -145,6 +153,9 @@ def parse_kgstats(path):
         "kg_inferred_inf":      f"{inferred_total:,}",
         "kg_total":             f"{after_total:,}",
         "kg_total_inf":         f"{after_total:,}",
+        # KG file totals
+        "kg_triples":           f"{kg_triples:,}",
+        "kg_distinct_subjects": f"{kg_subjects:,}",        
         # Asserted relation breakdown
         **{f"kg_rel_{k}": f"{v:,}" for k, v in rel_map.items()},
         # Attributes breakdown
@@ -244,11 +255,61 @@ def _row_by_key(rows, key_fragment):
 
 
 def apply_kg_placeholders(text, placeholders):
-    """Replace all {{ kg_* }} tokens in text with values from placeholders dict."""
+    """Replace all {{ kg_* }}, {{ release_* }} and {{ ontology_* }} tokens in text."""
     def replacer(m):
         key = m.group(1).strip()
-        return placeholders.get(key, m.group(0))
-    return re.sub(r"\{\{\s*(kg_\w+)\s*\}\}", replacer, text)
+        return str(placeholders.get(key, m.group(0)))
+    return re.sub(r"\{\{\s*((?:kg|release|ontology)_\w+)\s*\}\}", replacer, text)
+
+
+# ── Release and ontology metadata ──────────────────────────────────────────────
+
+def _long_date(iso):
+    """'2026-10-05' -> '5 October 2026'."""
+    try:
+        d = datetime.date.fromisoformat(str(iso))
+        return f"{d.day} {d.strftime('%B %Y')}"
+    except ValueError:
+        return str(iso)
+
+
+def release_placeholders(config):
+    """{{ release_* }} values from the release: block of config.yaml (written by release.py)."""
+    rel = config.get("release") or {}
+    if not rel:
+        print("  WARNING: no release: block in config.yaml — release placeholders will not be substituted.")
+        return {}
+    ref = rel.get("kgc_ref", "")
+    return {
+        "release_version":       rel.get("kg_version", ""),
+        "release_issued":        rel.get("kg_issued", ""),
+        "release_issued_long":   _long_date(rel.get("kg_issued", "")),
+        "release_modified":      rel.get("kg_modified", ""),
+        "release_modified_long": _long_date(rel.get("kg_modified", "")),
+        "release_license":       rel.get("kg_license", ""),
+        "release_kgc_ref":       ref,
+        "release_kgc_sha":       rel.get("kgc_sha", ""),
+        "release_kgc_url":       f"{KGC_REPO_URL}/tree/{ref}",
+        "release_changelog_url": f"{KGC_REPO_URL}/blob/{ref}/CHANGELOG.md",
+    }
+
+
+def ontology_placeholders(path):
+    """{{ ontology_* }} values read from the owl:Ontology header of lack-ontology.ttl."""
+    if not os.path.exists(path):
+        print(f"  WARNING: {path} not found — ontology placeholders will not be substituted.")
+        return {}
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
+    def grab(pattern):
+        m = re.search(pattern, text)
+        return m.group(1) if m else "n/a"
+    return {
+        "ontology_version":  grab(r'owl:versionInfo\s+"([^"]+)"'),
+        "ontology_issued":   grab(r'dc:issued\s+"([^"]+)"'),
+        "ontology_modified": grab(r'dc:modified\s+"([^"]+)"'),
+        "ontology_license":  grab(r'cc:license\s+<([^>]+)>'),
+    }
 
 
 # ── SPARQL queries (rdflib) ────────────────────────────────────────────────────
@@ -761,7 +822,9 @@ def main():
     template   = load_template()
 
     # Parse stats sources
-    kg_placeholders = parse_kgstats(KGSTATS_FILE)
+    kg_placeholders = parse_kgstats(KGSTATS_FILE)    
+    kg_placeholders.update(release_placeholders(config))
+    kg_placeholders.update(ontology_placeholders(ONTOLOGY_FILE))
     #sparql_stats    = query_kg_sparql(KG_FILE)
     #stats_html      = render_stats_html(kg_placeholders, sparql_stats)
 
@@ -803,9 +866,8 @@ def main():
 
         meta, body = parse_frontmatter(raw)
 
-        # Apply KG placeholders before markdown rendering
-        if md_file == "knowledge-graph.md":
-            body = apply_kg_placeholders(body, kg_placeholders)
+        # Apply KG, release and ontology placeholders before markdown rendering
+        body = apply_kg_placeholders(body, kg_placeholders)
         
         # Generate case studies index table dynamically
         if md_file == "case-studies.md" and case_data:
