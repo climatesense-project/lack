@@ -158,3 +158,15 @@ https://purl.net/climatesense/lack/ns#acquired,37
 https://purl.net/climatesense/lack/ns#wasAcquiredBy,37
 https://purl.net/climatesense/lack/ns#organised,13
 https://purl.net/climatesense/lack/ns#wasOrganisedBy,13
+
+### KG FILE (output/KG.ttl)
+
+Triple counts:
+
+count
+966880
+
+Distinct subjects:
+
+count
+99509
