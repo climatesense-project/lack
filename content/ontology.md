@@ -6,7 +6,7 @@ title: Ontology
 
 **Prefix:** `lack:`  
 **Namespace:** `https://purl.net/climatesense/lack/ns#`  
-**Status:** v1.0
+**Status:** {{ ontology_version }}
 
 ```turtle
 @prefix lack: <https://purl.net/climatesense/lack/ns#> .
