@@ -25,4 +25,5 @@ Additional candidate sources are under consideration.
 
 ## Status
 
-LACK is an active research project. Version 1.0 of the knowledge graph was released on 23 April 2026, comprising. The project is currently a resource paper submission to [ISWC 2026](https://iswc2026.semanticweb.org/).
+LACK is an active research project. 
+The current version of the knowledge graph is v{{ release_version }}, released on {{ release_modified_long }}.

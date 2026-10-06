@@ -24,11 +24,14 @@ URI:     https://purl.net/climatesense/lack/ns#
 
 ## Knowledge Graph Data
 
-The LACK knowledge graph v1.0 (released 23 April 2026) is available for download.
+The LACK knowledge graph v{{ release_version }} (released {{ release_modified_long }}) is available for download under [CC BY-NC 4.0]({{ release_license }}). See the [changelog]({{ release_changelog_url }}) for what changed between versions.
 
 | File | Format | Description |
 |---|---|---|
-| [KG.ttl]({{ base_url }}/KG.ttl) | Turtle (RDF) | Knowledge graph v1.0 — asserted + inferred triples |
+| [KG.zip]({{ base_url }}/KG.zip) | Turtle (RDF), zipped | Knowledge graph v{{ release_version }} — asserted + inferred triples ({{ kg_triples }} triples) |
+| [lack-dataset.ttl]({{ base_url }}/lack-dataset.ttl) | Turtle (RDF) | Dataset description (DCAT, VoID) |
+
+Built from [lack-kgc {{ release_kgc_ref }}]({{ release_kgc_url }}).
 
 Check the [GitHub repository](https://github.com/climatesense-project/lack) for updates.
 
